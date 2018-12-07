@@ -1,0 +1,134 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "ExamenesRealizadosPorUsuario";
+}
+<script src="~/JS/FuncionesVarias.js"></script>
+<style>
+    .contenedor-lst-examen .titulo-examen {
+        font-size: 15px;
+        font-style: italic;
+        font-weight: bold;
+        word-break: break-word;
+    }
+</style>
+<div class="">
+    <section class="content-header">
+        <h1>
+            Historias de mis Exámenes Realizados
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i>Mis examenes Realizados</a></li>
+            <li><a href="#">Examen</a></li>
+            <li class="active">Menu Principal</li>
+        </ol>
+    </section>
+
+    <section class="content" id="contenedorExamenes">
+    </section>
+</div>
+
+<script>
+    $(document).ready(function () {
+        inicializarVariables();
+        obtenerMisExamenesRealizados();
+    });
+
+
+    function inicializarVariables() {
+        window.lstExamenesRealizados = [];
+    }
+
+    function obtenerMisExamenesRealizados() {
+        $.ajax({
+            url: "../Examen/ObtenerExamenesRealizadosPorUsuario",
+            type: "POST",
+            datatype: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                window.lstExamenesRealizados = response;
+                mostrarExamenesRealizados();
+            },
+            error: function () { // Si la petición falla
+                alert("Error al procesar el registro");
+                window.lstExamenesRealizados = [];
+            },
+            complete: function () { }// Código a ejecutar sin importar si la petición falló o no
+        });
+    }
+
+    function mostrarExamenesRealizados() {
+        let examenesRealizados = window.lstExamenesRealizados;
+
+        if (examenesRealizados.length == 0) {
+            $("#contenedorExamenes").append(`
+                <div class="alert alert-info alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <h4><i class="icon fa fa-info"></i> Alerta!</h4>
+                    Usted todavía no ha realizado ningún examen
+                </div>
+            `);
+        } else {
+            let nroColumnas = 3;
+            let col_md = 12 / nroColumnas;
+            let fila = 0;
+            for (let i = 0; i < examenesRealizados.length; i++) {
+                let examenRealizado = examenesRealizados[i];
+                if (i % nroColumnas == 0) {
+                    fila++;
+                    $("#contenedorExamenes").append(`<div id="fila-${fila}" class="row"></div>`);
+                }
+                console.log(examenRealizado);
+                let classColor = "bg-red-active";
+                let totalPreguntas = examenRealizado.Examen.LstPreguntas.length;
+                let preguntasCorrectas = examenRealizado.NumeroPreguntasCorrectas;
+                let preguntasIncorrectas = totalPreguntas - preguntasCorrectas;
+                let escalaCalificacion = examenRealizado.Examen.EscalaCalificacion;
+                let notaObtenida = preguntasCorrectas * escalaCalificacion / totalPreguntas;
+
+                // Aprueba si contesta más del 50% de preguntas correctas
+                if (preguntasCorrectas * 100.0 / totalPreguntas > 50) {
+                    classColor = "bg-green";
+                }
+
+                $("#fila-" + fila).append(
+                    `<div class="col-md-${col_md}">
+                    <div class="box box-widget widget-user-2 contenedor-lst-examen">
+                        <div class ="widget-user-header ${classColor}">
+                            <div class="widget-user-image">
+                                <img class="img-circle" src="../Imagenes/icontest-100x100.png" alt="User Avatar">
+                            </div>
+                            <h3 class ="widget-user-username titulo-examen">${examenRealizado.Examen.Titulo}</h3>
+                            <h5 class ="widget-user-desc">${examenRealizado.Examen.FechaRegString}</h5>
+                        </div>
+                        <div class="box-footer no-padding">
+                            <ul class="nav nav-stacked">
+                                <li><a href="#">
+                                    <dl style="margin:0px;">
+                                        <dt>Descripción:</dt>
+                                        <dd>${examenRealizado.Examen.Descripcion}</dd>
+                                    </dl>
+                                    </a>
+                                </li>
+                                <li><a href="#"><i class ="fa fa-fw fa-clock-o"></i> Tiempo: <span class ="pull-right badge bg-maroon">${examenRealizado.Examen.TiempoMaximo} min.</span></a></li>
+                                <li><a href="#"><i class ="fa fa-fw fa-calendar-minus-o"></i> Fecha Realizada: <span class ="pull-right badge bg-blue">${examenRealizado.StrFechaRealizacion}</span></a></li>
+                                <li><a href="#"><i class ="fa fa-fw fa-calendar-plus-o"></i> Fecha Terminada: <span class ="pull-right badge bg-blue">${examenRealizado.StrFechaTermino}</span></a></li>
+                                <li><a href="#"><i class ="fa fa-fw fa-list-ul"></i> Total Preguntas realizadas: <span class ="pull-right badge bg-black">${totalPreguntas}</span></a></li>
+                                <li><a href="#"><i class ="fa fa-fw fa-check" style="color:#00a65a;"></i> Nro Preguntas Correctas: <span class ="pull-right badge bg-green">${preguntasCorrectas}</span></a></li>
+                                <li><a href="#"><i class ="fa fa-fw fa-close" style="color:#d33724;"></i> Nro Preguntas Incorrectas: <span class ="pull-right badge bg-red">${preguntasIncorrectas}</span></a></li>
+                                <li><a href="#"><i class ="fa fa-fw fa-check-square-o"></i> Nota obtenida: <span class ="pull-right badge ${classColor}">${round10(notaObtenida, -1)}</span></a></li>
+                                <li></li>
+                            </ul>
+                            <div style="text-align: center; margin-top: 10px;">
+                                <a class ="btn btn-app" href="../Examen/ExamenRealizado?idExamenRealizado=${examenRealizado.IdExamenRealizado}">
+                                    <i class ="fa fa-file-text"></i> Ver Respuestas
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>`
+                );
+            }
+        }
+    }
+</script>

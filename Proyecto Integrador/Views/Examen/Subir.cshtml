@@ -1,0 +1,167 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Subir";
+    var archivoSubido = ViewBag.archivoSubido;
+    var rutaArchivoSubido = ViewBag.rutaArchivoSubido;
+}
+
+<div class="box box-primary">
+    <div class="box-header with-border">
+        <h3 class="box-title">Subida de archivo Excel</h3>
+    </div>
+    <!-- /.box-header -->
+    <!-- form start -->
+    <input type="hidden" value="@archivoSubido" id="hdArchivoSubido" />
+    <input type="hidden" value="@rutaArchivoSubido" id="hdRutaArchivoSubido" />
+
+    @using (Html.BeginForm("Subir", "Examen", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="box-body">
+            <div class="form-group">
+                <label for="exampleInputFile">Subir examen desde archivo Excel</label>
+                <input name="archivoExcel" type="file" id="btnSeleccionarArchivoExcel">
+                <p class="help-block">Pulse el botón Subir para empezar la subida.</p>
+            </div>
+        </div>
+        <!-- /.box-body -->
+
+        <div class="box-footer">
+            <button type="submit" class="btn btn-info"><span class="fa fa-upload"></span> Subir</button>
+        </div>
+    }
+
+
+</div>
+<script src="~/JS/xlsx.full.min.js"></script>
+<script>
+    // Para registrar el examen
+    function registrarExamen(examen) {
+        let data = examen;
+        $.ajax({
+            url: '../Examen/RegistrarExamen',
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(data),
+            success: function (response) {
+                var respuesta = JSON.parse(response);
+                if (respuesta) {
+                    swal('Buen trabajo!', 'Se registró el examen correctamente!', 'success');
+                } else {
+                    swal({
+                        type: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un error al registrar el examen'
+                    })
+
+                }
+            },
+            error: function () {
+                swal({
+                    type: 'error',
+                    title: 'Error',
+                    text: 'Error al procesar el registro'
+                });
+            }
+        });
+    }
+
+    function eliminarArchivoTemporal(ruta) {
+        $.ajax({
+            url: '../Examen/EliminarArchivoTemporal',
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({
+                rutaArchivo: ruta
+            }),
+            success: function (response) {
+                var respuesta = JSON.parse(response);
+                if (respuesta) {
+                    console.log("Se eliminó satisfactoriamente el archivo temporal: " + ruta);
+                } else {
+                    console.log("No se pudo eliminar el archivo temporal: " + ruta);
+                }
+            },
+            error: function () {
+                console.log("Ocurrió un error al eliminar el archivo temporal: " + ruta);
+            }
+        });
+    }
+
+    $(document).ready(() => {
+        var archivoSubido = $("#hdArchivoSubido").val();
+
+        if (archivoSubido == "subido") {
+            // Procesa el archivo y lo convierte a json
+            /* set up XMLHttpRequest */
+            var url = $("#hdRutaArchivoSubido").val();
+            var oReq = new XMLHttpRequest();
+            oReq.open("GET", url, true);
+            oReq.responseType = "arraybuffer";
+
+            oReq.onload = function (e) {
+                var arraybuffer = oReq.response;
+
+                /* convert data to binary string */
+                var data = new Uint8Array(arraybuffer);
+                var arr = new Array();
+                for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+                var bstr = arr.join("");
+
+                /* Call XLSX */
+                var workbook = XLSX.read(bstr, { type: "binary" });
+
+                /* DO SOMETHING WITH workbook HERE */
+                var examen = workbook.SheetNames[0];
+                var LstPreguntas = workbook.SheetNames[1];
+                var LstAlternativa = workbook.SheetNames[2];
+                var LstImagen = workbook.SheetNames[3];
+                var LstVideo = workbook.SheetNames[4];
+
+                /* Get worksheet */
+                var oExamen = workbook.Sheets[examen];
+                var oLstPreguntas = workbook.Sheets[LstPreguntas];
+                var oLstAlternativa = workbook.Sheets[LstAlternativa];
+                var oLstImagen = workbook.Sheets[LstImagen];
+                var oLstVideo = workbook.Sheets[LstVideo];
+
+                // console.log();
+                var jsonExamen = XLSX.utils.sheet_to_json(oExamen, { raw: true })
+                var jsonLstPreguntas = XLSX.utils.sheet_to_json(oLstPreguntas, { raw: true })
+                var jsonAlternativa = XLSX.utils.sheet_to_json(oLstAlternativa, { raw: true })
+                var jsonImagen = XLSX.utils.sheet_to_json(oLstImagen, { raw: true })
+                var jsonVideo = XLSX.utils.sheet_to_json(oLstVideo, { raw: true })
+
+                var objeto = jsonExamen[0];
+
+                // Recorrer las preguntas
+                for (var i = 0; i < jsonLstPreguntas.length; ++i) {
+                    var pregunta = jsonLstPreguntas[i];
+                    var numero = pregunta.Numero;
+                    pregunta.LstAlternativa = [];
+
+                    for (var j = 0; j < jsonAlternativa.length; ++j) {
+                        var numeroPregunta = jsonAlternativa[j].NumeroPregunta;
+                        if (numero == numeroPregunta) {
+                            pregunta.LstAlternativa.push(jsonAlternativa[j]);
+                        }
+                    }
+                }
+
+                objeto.LstPreguntas = jsonLstPreguntas;
+                registrarExamen(objeto);
+                eliminarArchivoTemporal(url);
+            }
+
+            oReq.send();
+
+        } else if (archivoSubido == "error") {
+            swal({
+                type: 'error',
+                title: 'Error',
+                text: 'No ha seleccionado ningún archivo excel para subir'
+            });
+        }
+    });
+</script>

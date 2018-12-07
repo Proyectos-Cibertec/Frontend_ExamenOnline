@@ -1,0 +1,114 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Registrar Usuario</title>
+
+    <link rel="stylesheet" href="~/CSS/Registrar/fonts/material-icon/css/material-design-iconic-font.min.css">
+    <!-- Sweet Alert Style -->
+    <link href="~/bower_components/sweet-alert/css/sweetalert2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/CSS/Registrar/css/style.css">
+    <!-- Sweet Alert JS -->
+    <script src="~/bower_components/sweet-alert/js/sweetalert2.all.min.js"></script>
+</head>
+<body>
+
+    <div class="main">
+
+        <div class="container">
+            <form method="POST" enctype="multipart/form-data" class="appointment-form" id="appointment-form">
+                <h2>Plataforma de examenes online</h2>
+                <div class="form-group-1">
+                    <input type="text" name="Nombres" id="Nombres" placeholder="Nombres" required />
+                    <input type="text" name="ApellidoPaterno" id="ApellidoPaterno" placeholder="Apellido Paterno" required />
+                    <input type="text" name="ApellidoMaterno" id="ApellidoMaterno" placeholder="Apellido Materno" required />
+                    <input type="email" name="Correo" id="Correo" placeholder="Correo" required />
+                    <input type="number" name="Dni" id="Dni" placeholder="N° documento indentidad" maxlength="8" required />
+                    <input type="text" name="Usuario" id="Usuario" placeholder="Nombre de usuario" required />
+                    <input type="password" name="Contrasenia" id="Contrasenia" placeholder="Contraseña" required />
+                    <input type="password" name="confContrasenia" id="confContrasenia" placeholder="Confirmar Contraseña" required />
+                    <input type="file" name="imgUsuario" id="imgUsuario"/>
+                    <div class="error">
+                        @ViewBag.mensajeError
+                    </div>
+
+                    @*<input type="number" name="phone_number" id="phone_number" placeholder="Phone number" required />
+                    <div class="select-list">
+                        <select name="course_type" id="course_type">
+                            <option slected value="">Course Type</option>
+                            <option value="society">Society</option>
+                            <option value="language">Language</option>
+                        </select>
+                    </div>*@
+                </div>
+                @*<div class="form-group-2">
+                    <h3>How would you like to bo located ?</h3>
+                    <div class="select-list">
+                        <select name="confirm_type" id="confirm_type">
+                            <option seleected value="">By phone</option>
+                            <option value="by_email">By email</option>
+                        </select>
+                    </div>
+                    <div class="select-list">
+                        <select name="hour_appointment" id="hour_appointment">
+                            <option seleected value="">Hours : 8am 10pm</option>
+                            <option value="9h-11h">Hours : 9am 11pm</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" />
+                    <label for="agree-term" class="label-agree-term"><span><span></span></span>I agree to the  <a href="#" class="term-service">Terms and Conditions</a></label>
+                </div>*@
+                <div class="form-submit">
+                    <button type="submit" id="submit" class="submit" >Registrarse</button>
+                    <a style="text-decoration:none" href="~/Login/Index" class="submit">Iniciar sesión</a>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- JS -->
+    <script src="~/CSS/Registrar/vendor/jquery/jquery.min.js"></script>
+    <script src="~/CSS/Registrar/js/main.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            $("#submit").click(function () {
+
+                if ($("#Dni").val().trim().length != 8) {
+                    swal({
+                        type: 'error',
+                        title: 'Error',
+                        text: 'El DNI debe tener 8 digitos!',
+                    });
+
+                    return false;
+                }
+
+                if ($("#Contrasenia").val() != $("#confContrasenia").val()) {
+                    swal({
+                        type: 'error',
+                        title: 'Error',
+                        text: 'Las Contraseñas no coinciden!',
+                    });
+
+                    return false;
+                }
+
+            });
+
+        })
+    </script>
+
+</body>
+</html>

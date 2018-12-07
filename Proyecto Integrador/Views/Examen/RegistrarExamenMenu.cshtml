@@ -1,0 +1,36 @@
+﻿<style>
+    .btn {
+        width: 100%;
+        display: none;
+        margin: 5px auto;
+    }
+</style>
+
+<div class="col-xs-8 col-sm-7 col-md-5 col-lg-3">
+    <button type="button" id="btnRegistrarManualmente" class="btn btn-primary"><i class="fa fa-save"></i> Registrar con diseñador</button>
+    <button type="button" id="btnSubirExamen" class="btn btn-success"><i class="fa fa-upload"></i> Subir plantilla</button>
+</div>
+    
+
+<script>
+    $(document).ready(function () {
+        inicializarEventos();
+        mostrarBotones();
+    });
+
+    function mostrarBotones() {
+        $("#btnRegistrarManualmente").slideDown(function () {
+            $("#btnSubirExamen").slideDown();;
+        });
+    }
+
+    function inicializarEventos() {
+        $("#btnRegistrarManualmente").on("click", function () {
+            window.location = "../Examen/Registrar";
+        });
+
+        $("#btnSubirExamen").on("click", function () {
+            window.location = "../Examen/Subir";
+        });
+    }
+</script>

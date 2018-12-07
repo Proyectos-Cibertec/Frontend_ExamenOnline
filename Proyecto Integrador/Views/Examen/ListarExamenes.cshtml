@@ -1,0 +1,192 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "ListarExamenes";
+}
+<style>
+    .contenedor-lst-examen .titulo-examen {
+        font-size: 15px;
+        font-style: italic;
+        font-weight: bold;
+        word-break: break-word;
+    }
+
+    .contenedor-examen {
+        display:none;
+    }
+</style>
+<div class="">
+    <section class="content-header">
+        <h1>
+            Lista de Últimos Exámenes
+            <small>Intenta resolver alguno</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Listado de examenes</a></li>
+            <li><a href="#">Examen</a></li>
+            <li class="active">Menu Principal</li>
+        </ol>
+    </section>
+
+    <section id="contenedorExamenes" class="content">
+    </section>
+
+
+    <div class="modal modal-info fade" id="modalConfirmacionExamen">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">¿Está seguro que desea resolver este examen?</h4>
+                    <input type="hidden" value="" id="idExamenDinamico"/>
+                </div>
+                <div class="modal-body">
+                    <p>El tiempo iniciará desde que de click al boton resolver examen</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline pull-left" id="btnResolverExamenTemporal">Resolver Examen</button>
+                    <button type="button" class="btn btn-outline" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        inicializarVariables();
+        obtenerExamenesPublicos();
+
+        $("#btnResolverExamenTemporal").click(function () {
+            let idExamen = $("#idExamenDinamico").val();
+
+            $.ajax({
+                url: '../Examen/RegistrarExamenRealizadoTemp',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({
+                    'IdExamen': idExamen,
+                    'clave': ""
+                }),
+                success: function (respuesta) {
+                    console.log(respuesta);
+                    if (respuesta.Registra) {
+                        // Trae como respuesta el id del ExamenRealizado que se ha generado
+                        window.location.href = "../Examen/ResolverExamen?IdExamen=" + idExamen + "&IdExamenRealizado=" + respuesta.IdExamenRealizado;
+                    } else {
+                        swal({
+                            type: 'error',
+                            title: 'Error',
+                            text: respuesta.MensajeError,
+                        });
+                    }
+                },
+                error: function () {
+                    swal({
+                        type: 'error',
+                        title: 'Error',
+                        text: "Ocurrio un error al registrar el examen temporal",
+                    });
+                }
+            });
+                        
+        });
+
+    });
+
+
+    function inicializarVariables() {
+        window.lstExamenes = [];
+    }
+
+    function obtenerExamenesPublicos() {
+        $.ajax({
+            url: "../Examen/Usp_ObtenerExamenesPublicos", // URL de la petición
+            type: "POST", // Tipo de petición
+            datatype: "json", // El tipo de información de la respuesta
+            contentType: "application/json; charset=utf-8",
+            success: function (response) { // Si la respuesta es correcta
+                // No necesita convertir?
+                window.lstExamenes = response;
+                mostrarExamenes();
+            },
+            error: function () { // Si la petición falla
+                alert("Error al procesar el registro");
+                window.lstExamenes = [];
+            },
+            complete: function () { }// Código a ejecutar sin importar si la petición falló o no
+        });
+    }
+
+    function mostrarExamenes() {
+        $("#contenedorExamenes").empty();
+        let examenes = window.lstExamenes;
+
+        if (examenes.length == 0) {
+            $("#contenedorExamenes").append(`
+                <div class="alert alert-info alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <h4><i class="icon fa fa-info"></i> Alerta!</h4>
+                    No hay exámenes registrados en la base de datos o han expirado todos
+                </div>
+            `);
+        } else {
+            let nroColumnas = 3;
+            let col_md = 12 / nroColumnas;
+            let fila = 0;
+            for (let i = 0; i < examenes.length; i++) {
+                let examen = examenes[i];
+                if (i % 3 == 0) {
+                    fila++;
+                    $("#contenedorExamenes").append(`<div id="fila-${fila}" class="row"></div>`);
+                }
+                $("#fila-" + fila).append(
+                    `<div id="contenedor-examen-${i}" class="contenedor-examen col-md-${col_md}">
+                    <div class="box box-widget widget-user-2 contenedor-lst-examen">
+                        <div class="widget-user-header bg-primary">
+                            <div class="widget-user-image">
+                                <img class="img-circle" src="${examen.Usuario.imgData}" alt="User Avatar">
+                            </div>
+                            <h3 class="widget-user-username titulo-examen">${examen.Titulo}</h3>
+                            <h5 class="widget-user-desc">${examen.FechaRegString}</h5>
+                        </div>
+                        <div class="box-footer no-padding">
+                            <ul class="nav nav-stacked">
+                                <li><a href="#">
+                                    <dl style="margin:0px;">
+                                        <dt>Descripción:</dt>
+                                        <dd>${examen.Descripcion}</dd>
+                                    </dl>
+                                    </a>
+                                </li>
+                                <li><a href="#"><i class ="fa fa-fw fa-list-ul"></i> Nro Preguntas: <span class="pull-right badge bg-blue">${examen.NroPreguntas}</span></a></li>
+                                <li><a href="#"><i class ="fa fa-fw fa-clock-o"></i> Tiempo: <span class="pull-right badge bg-aqua">${examen.TiempoMaximo} min.</span></a></li>
+                                <li><a href="#"><i class ="fa fa-fw fa-calendar"></i> Expira el: <span class="pull-right badge bg-green">${examen.FechaExpString}</span></a></li>
+                                <li><a href="#"><i class ="fa fa-fw fa-users"></i> Nro Suscritos: <span class ="pull-right badge bg-red">0</span></a></li>
+                                <li></li>
+                                <div style="text-align: center; margin-top: 10px;">
+                                    <a class ="btn btn-app" href="#" onclick="ConfirmarExamen(${examen.IdExamen})">
+                                        <i class ="fa fa-pencil"></i></i> Resolver Examen
+                                    </a>
+                                </div>
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>`
+                );
+                $("#contenedor-examen-" + i).slideDown(750);
+            }
+        }
+    }
+
+    function ConfirmarExamen(IdExamen) {
+        $("#idExamenDinamico").val(IdExamen);
+        $('#modalConfirmacionExamen').modal('show');
+
+    }
+
+</script>

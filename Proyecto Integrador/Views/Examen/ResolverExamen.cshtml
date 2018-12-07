@@ -1,0 +1,90 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="">
+    <section class="content-header">
+        <h1>
+            Resolver examen
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Resolver examen</a></li>
+            <li><a href="#">Examen</a></li>
+            <li class="active">Menu Principal</li>
+        </ol>
+    </section>
+
+    <section class="content" ng-controller="ResolverExamenController">
+        <input type="hidden" name="" id="IdExamen" value="@ViewBag.IdExamen" />
+        <input type="hidden" name="" id="idExamenRealizado" value="@ViewBag.idExamenRealizado" />
+
+        <div ng-show="validacionExamen === false" class="box">
+            <div class="callout callout-warning">
+                <h4>Aviso del sistema!</h4>
+
+                <p>
+                    Este Examen ya no se encuentra disponible por motivo de fecha de expiracion o tiempo del examen realizado.
+                </p>
+            </div>
+        </div>
+
+        <div ng-show="validacionExamen === true" class="box">
+            <!-- /.box-header -->
+            <div class="box-header with-border">
+                <div class="col-md-3 order-md-2 mb-4" style="text-align:center">
+                    <img src="~/dist/img/user2-160x160.jpg" title="Usuario" alt="ImagenUsuario" style="width:50%" />
+                </div>
+                <div class="col-md-9 order-md-1">
+                    <h4 class="mb-3"><b>{{objExamen.Usuario.NombreCompleto}}</b></h4>
+                    <hr class="mb-3">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <span class="text-muted">Examen</span>
+                            <h5>{{objExamen.Descripcion}}</h5>
+                        </div>
+
+                        <div class="col-md-3">
+                            <span class="text-muted">Fecha Inicio</span>
+                            <h5>{{objExamen.FechaRegString}}</h5>
+                        </div>
+
+                        <div class="col-md-3">
+                            <span class="text-muted">Fecha Expiración</span>
+                            <h5>{{objExamen.FechaExpString}}</h5>
+                        </div>
+
+                        <div class="col-md-3">
+                            <span class="text-muted">Tiempo</span>
+                            <h5 id="countdown" class="timer text-blue" style="font-size:20px;font-weight: bold;"></h5>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.box-body -->
+            <div class="box-body">
+
+                <div ng-repeat="pre in objExamen.LstPreguntas" class="col-sm-5  card flex-md-row mb-5 box-shadow h-md-250">
+                    <div class="col-md-12 callout callout-info" style="text-align:center">
+                        <b>PREGUNTA N° {{pre.Numero}}</b>
+                        <span ng-bind-html="renderHtml(pre.Pregunta)"></span>
+                    </div>
+                    <div class="col-md-12">
+                        <label ng-repeat="alt in pre.LstAlternativa" class="col-md-12">
+                            {{alt.Numero}} .-
+                            <input ng-if="alt.CantAltCorrectas === 1" value="{{alt.Descripcion}}" type="radio" id="pregunta-{{pre.Numero}}-alternativa-{{alt.Numero}}" name="alternativa-{{pre.Numero}}" class="radio-inline" />
+                            <input ng-if="alt.CantAltCorrectas > 1" value="{{alt.Descripcion}}" type="checkbox" id="pregunta-{{pre.Numero}}-alternativa-{{alt.Numero}}" name="" class="checkbox-inline" />
+                            {{alt.Descripcion}}
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-12" style="text-align:center;margin-top:15px">
+                    <button ng-click="TerminarExamen()" type="button" class="btn btn-success btn-lg">Finalizar Examen</button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>
+

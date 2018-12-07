@@ -1,0 +1,132 @@
+﻿
+@{
+    ViewBag.Title = "MisExamenesCreados";
+}
+
+<script src="~/JS/FuncionesVarias.js"></script>
+<style>
+    .claveOculta {
+        display: none !important;
+    }
+
+    .contenedor-lst-examen .titulo-examen {
+        font-size: 15px;
+        font-style: italic;
+        font-weight: bold;
+        word-break: break-word;
+    }
+</style>
+<div class="">
+    <section class="content-header" style="padding-bottom:2%">
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i>Mis examenes Creados</a></li>
+            <li><a href="#">Examen</a></li>
+            <li class="active">Menu Principal</li>
+        </ol>
+    </section>
+
+    <section class="content" id="contenedorExamenes"></section>
+</div>
+
+<script>
+    $(document).ready(function () {
+        let tipoUsuario = $("#hdUsuarioSuscripcion").val();
+        if (tipoUsuario > 0) {
+            $("#usuarioSuscripcion").show();
+        }
+
+        inicializarVariables();
+        obtenerMisExamenesCreados();
+    });
+
+    function inicializarVariables() {
+        window.lstExamenesCreados = [];
+    }
+
+    function obtenerMisExamenesCreados() {
+        $.ajax({
+            url: "../Examen/ObtenerExamenesCreadosPorUsuario",
+            type: "POST",
+            datatype: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                window.lstExamenesCreados = response;
+                mostrarExamenesCreados();
+            },
+            error: function () { // Si la petición falla
+                alert("Error al procesar el registro");
+                window.lstExamenesCreados = [];
+            },
+            complete: function () { }// Código a ejecutar sin importar si la petición falló o no
+        });
+    }
+
+    function mostrarExamenesCreados() {
+        let examenesCreados = window.lstExamenesCreados;
+        console.log(examenesCreados);
+
+        if (examenesCreados.length == 0) {
+            $("#contenedorExamenes").append(`
+                <div class="alert alert-info alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <h4><i class="icon fa fa-info"></i> Alerta!</h4>
+                    Usted todavía no ha realizado ningún examen
+                </div>
+            `);
+        } else {
+            let nroColumnas = 3;
+            let col_md = 12 / nroColumnas;
+            let fila = 0;
+            for (let i = 0; i < examenesCreados.length; i++) {
+                let examenCreado = examenesCreados[i];
+                if (i % nroColumnas == 0) {
+                    fila++;
+                    $("#contenedorExamenes").append(`<div id="fila-${fila}" class="row"></div>`);
+                }
+                
+                let classColor = "";
+                let totalPreguntas = examenCreado.LstPreguntas.length;
+                let escalaCalificacion = examenCreado.EscalaCalificacion;
+                let oculto = "";
+                if (examenCreado.Clave.length == 0) {
+                    oculto = "claveOculta";
+                } else {
+                    classColor = "bg-blue-active";
+                }
+
+                $("#fila-" + fila).append(
+                    `<div class="col-md-${col_md}">
+                    <div class="box box-widget widget-user-2 contenedor-lst-examen">
+                        <div class ="widget-user-header ${classColor}">
+                            <div class="widget-user-image">
+                                <img class="img-circle" src="../Imagenes/icontest-100x100.png" alt="User Avatar">
+                            </div>
+                            <h3 class ="widget-user-username titulo-examen">${examenCreado.Titulo}</h3>
+                            <h5 class ="widget-user-desc">${examenCreado.FechaRegString}</h5>
+                        </div>
+                        <div class="box-footer no-padding">
+                            <ul class="nav nav-stacked">
+                                <li><a href="#">
+                                    <dl style="margin:0px;">
+                                        <dt>Descripción:</dt>
+                                        <dd>${examenCreado.Descripcion}</dd>
+                                    </dl>
+                                    </a>
+                                </li>
+                                <li><a href="#"><i class ="fa fa-fw fa-clock-o"></i> Tiempo: <span class ="pull-right badge bg-maroon">${examenCreado.TiempoMaximo} min.</span></a></li>
+                                <li><a href="#"><i class ="fa fa-fw fa-calendar-minus-o"></i> Fecha Registro: <span class ="pull-right badge bg-blue">${examenCreado.FechaRegString}</span></a></li>
+                                <li class="${oculto}"><a href="#"><i class ="fa fa-fw  fa-barcode"></i> ID: <span class ="pull-right badge" style="background:#777; font-size: 15px !important;">${examenCreado.IdExamen} </span></a></li>
+                                <li class="${oculto}"><a href="#"><i class ="fa fa-fw fa-unlock"></i> CLAVE: <span class ="pull-right badge" style="background:#777; font-size: 15px !important;">${examenCreado.Clave}</span></a></li>
+                                <li><a href="#"><i class ="fa fa-fw fa-calendar-plus-o"></i> Fecha Expiración: <span class ="pull-right badge bg-aqua">${examenCreado.FechaExpString}</span></a></li>
+                                <li><a href="#"><i class ="fa fa-fw fa-sort-amount-desc"></i> Escala de Calificación: <span class ="pull-right badge bg-black">0 - ${examenCreado.EscalaCalificacion}</span></a></li>
+                                <li><a href="#"><i class ="fa fa-fw fa-list-ul"></i> Total Preguntas: <span class ="pull-right badge bg-green">${totalPreguntas}</span></a></li>
+                                <li></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>`
+                );
+            }
+        }
+    }
+</script>

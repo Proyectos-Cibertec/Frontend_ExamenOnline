@@ -1,0 +1,148 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Exámenes Pendientes";
+}
+
+<style>
+    .contenedor-lst-examen .titulo-examen {
+        font-size: 15px;
+        font-style: italic;
+        font-weight: bold;
+        word-break: break-word;
+    }
+</style>
+<div class="">
+    <section class="content-header">
+        <h1>
+            Lista de mis Exámenes Pendientes
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i>Mis examenes Pendientes</a></li>
+            <li><a href="#">Examen</a></li>
+            <li class="active">Menu Principal</li>
+        </ol>
+    </section>
+
+    <section class="content" id="contenedorExamenes"></section>
+</div>
+
+<script>
+    $(document).ready(function () {
+        inicializarVariables();
+        cerrarExamenesExpirados();
+    });
+
+
+    function inicializarVariables() {
+        window.lstExamenesPendientes = [];
+    }
+
+    // Función que cierra aquellos exámenes que expiraron pero que no fueron cerrados apropiadamente
+    function cerrarExamenesExpirados() {
+        $.ajax({
+            url: "../Examen/CerrarExamenesExpiradosPorUsuario",
+            type: "POST",
+            datatype: "json",
+            contentType: "application/json; charse=utf-8",
+            success: function (response) {
+                console.log(response);
+                if (response) {
+                    obtenerMisExamenesPendientes();
+                }
+            },
+            error: function () {
+            },
+            complete: function () {}
+        });
+    }
+
+    function obtenerMisExamenesPendientes() {
+        $.ajax({
+            url: "../Examen/ObtenerExamenesPendientesPorUsuario",
+            type: "POST",
+            datatype: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                window.lstExamenesPendientes = response;
+                mostrarExamenesPendientes();
+            },
+            error: function () { // Si la petición falla
+                alert("Error al procesar el registro");
+                window.lstExamenesPendientes = [];
+            },
+            complete: function () { }// Código a ejecutar sin importar si la petición falló o no
+        });
+    }
+
+    function mostrarExamenesPendientes() {
+        let examenesPendientes = window.lstExamenesPendientes;
+
+        if (examenesPendientes.length == 0) {
+            $("#contenedorExamenes").append(`
+                <div class="alert alert-info alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <h4><i class="icon fa fa-info"></i> Alerta!</h4>
+                    No tiene exámenes pendientes por resolver o todos ya expiraron
+                </div>
+            `);
+        } else {
+            let nroColumnas = 3;
+            let col_md = 12 / nroColumnas;
+            let fila = 0;
+            for (let i = 0; i < examenesPendientes.length; i++) {
+                let examenRealizado = examenesPendientes[i];
+                if (i % 3 == 0) {
+                    fila++;
+                    $("#contenedorExamenes").append(`<div id="fila-${fila}" class="row"></div>`);
+                }
+                console.log(examenRealizado);
+                let classColor = examenRealizado.TotalPreguntas == examenRealizado.NumeroPreguntasCorrectas ? "bg-green" : "bg-red-active";
+                let totalPreguntas = examenRealizado.Examen.LstPreguntas.length;
+                let preguntasCorrectas = examenRealizado.NumeroPreguntasCorrectas;
+                let preguntasIncorrectas = totalPreguntas - preguntasCorrectas;
+
+                let tiempoRestante = examenRealizado.Examen.TiempoRestante;
+                let minutos = Math.floor(tiempoRestante / 60);
+                let segundos = tiempoRestante - minutos * 60;
+
+                $("#fila-" + fila).append(
+                    `<div class="col-md-${col_md}">
+                    <div class="box box-widget widget-user-2 contenedor-lst-examen">
+                        <div class ="widget-user-header ${classColor}">
+                            <div class="widget-user-image">
+                                <img class="img-circle" src="../Imagenes/icontest-100x100.png" alt="User Avatar">
+                            </div>
+                            <h3 class ="widget-user-username titulo-examen">${examenRealizado.Examen.Titulo}</h3>
+                            <h5 class ="widget-user-desc">${examenRealizado.Examen.FechaRegString}</h5>
+                        </div>
+                        <div class="box-footer no-padding">
+                            <ul class="nav nav-stacked">
+                                <li><a href="#">
+                                    <dl style="margin:0px;">
+                                        <dt>Descripción:</dt>
+                                        <dd>${examenRealizado.Examen.Descripcion}</dd>
+                                    </dl>
+                                    </a>
+                                </li>
+                                <li><a href="#"><i class ="fa fa-fw fa-clock-o"></i> Duración: <span class ="pull-right badge bg-maroon">${examenRealizado.Examen.TiempoMaximo} min.</span></a></li>
+                                <li><a href="#"><i class ="fa fa-fw fa-clock-o"></i> Tiempo restante: <span class ="pull-right badge bg-maroon">${minutos} : ${segundos} segundos</span></a></li>
+                                <li><a href="#"><i class ="fa fa-fw fa-calendar-minus-o"></i> Empezó en: <span class ="pull-right badge bg-blue">${examenRealizado.StrFechaRealizacion}</span></a></li>
+                                <li><a href="#"><i class ="fa fa-fw fa-list-ul"></i> Total Preguntas: <span class ="pull-right badge bg-black">${totalPreguntas}</span></a></li>
+                                <li><a href="#"><i class ="fa fa-fw fa-check" style="color:#00a65a;"></i> Nro Preguntas Contestadas: <span class ="pull-right badge bg-green">${preguntasCorrectas}</span></a></li>
+                                <li></li>
+                            </ul>
+                            <div style="text-align: center; margin-top: 10px;">
+                                <a class ="btn btn-app" href="../Examen/ResolverExamen?IdExamen=${examenRealizado.Examen.IdExamen}&idExamenRealizado=${examenRealizado.IdExamenRealizado}">
+
+                                    <i class ="fa fa-file-text"></i> Continuar Examen
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>`
+                );
+            }
+        }
+    }
+</script>

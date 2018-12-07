@@ -1,0 +1,889 @@
+﻿@{ 
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.css">
+<link href="~/bower_components/froala_editor/css/froala_editor.pkgd.min.css" rel="stylesheet" />
+<link href="~/bower_components/froala_editor/css/froala_style.min.css" rel="stylesheet" />
+<link href="~/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css" rel="stylesheet" />
+
+<!-- Include external JS libs. -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/mode/xml/xml.min.js"></script>
+<script src="~/bower_components/froala_editor/js/froala_editor.pkgd.min.js"></script>
+<script src="~/bower_components/froala_editor/js/languages/es.js"></script>
+<script src="~/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="~/bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
+<style>
+
+    #usuarioSuscripcion {
+        display: none;
+    }
+
+    #cajaPreguntas,
+    #contenedorAgregarPregunta,
+    #cajaVideoEImagen {
+        display: none;
+    }
+
+    #contenedorOpcionesMultimedia {
+        display: none !important;
+    }
+
+    div#divTablaAlternativa {
+        clear: both;
+    }
+</style>
+<div class="">
+    <input id="hdUsuarioSuscripcion" type="hidden" value="@ViewBag.TipoUsuario"/>
+    <section class="content-header">
+        <h1>
+            Registrar Examen
+        </h1>
+        <ol class="breadcrumb">
+            <li>Menu Principal</li>
+            <li><a href="#"><i class="fa fa-dashboard"></i> Examen</a></li>
+            <li class="active"><a href="#">Registrar Examen</a></li>
+        </ol>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="box box-default">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Opciones generales del examen</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group col-md-12">
+                                <label>Titulo examen</label>
+                                <input class="form-control" id="txtTitulo" name="" placeholder="Ingrese titulo del examen" type="text" maxlength="70" />
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Duración (minutos)</label>
+                                <input id="txtTiempo" name="" class="form-control" placeholder="Ingrese Duración en minutos" type="text" />
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Fecha expiración</label>
+                                <div class="input-group date">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                    <input name="" id="txtFechaExpiracion" maxlength="10" type="text" class="form-control datepicker" />
+                                </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>Categoria</label>
+                                <select id="idcategoria" name="categoria" class="form-control">
+                                    <option value="-1">SELECCIONE...</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-12" id="usuarioSuscripcion">
+                                <label>Clave del Examen (Válido solo para usuarios con suscripción Premium, Gold, etc..)</label>
+                                <input class="form-control" id="txtClave" name="" placeholder="Ingrese clave" type="password" maxlength="50" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group col-md-12">
+                                <label>Descripción</label>
+                                <textarea id="txtDescripcion" name="" placeholder="Ingrese descripción del examen" class="form-control" style="height:90px;resize:vertical"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="text-align: center;">
+            <button type="button" id="btnDiseñarPregunta" class="btn btn-app"><i class="fa fa-clone"></i> Nueva Pregunta</button>
+            <button type="button" id="btnOcultarPregunta" class="btn btn-app"><i class="fa fa-close"></i> Ocultar Pregunta</button>
+        </div>
+        <div id="cajaPreguntas" class="box">
+            <div class="box-header with-border">
+                <h3 class="box-title"><i class="fa fa-tag"></i> Pregunta # <span id="txtNumeroPregunta"></span></h3>
+            </div>
+            <div class="box-body">
+
+                <div class="row">
+                    <!--<div class="col-md-12">
+                        <fieldset>
+                            <legend>Edición de preguntas</legend>
+                        </fieldset>
+                    </div>-->
+                    <div class="col-md-12">
+                        <div class="form-group col-md-12">
+                            <textarea name="" id="" class="froala_editor"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <div style="display:none;">
+                            <label>IdAlternativa</label>
+                            <input name="idAlternativa" id="txtIdAlternativa" class="form-control" type="text" placeholder="Id Alternativa" />
+                        </div>
+                        <div class="col-lg-7 col-md-6 col-sm-12">
+                            <label>Descripción alternativa</label>
+                            <input name="DescAlternativa" id="txtDescAlternativa" class="form-control" type="text" placeholder="Ingrese descripción" />
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-6">
+                            <br />
+                            <label for="chkAltCorrecta">Alternativa correcta?</label>
+                            <input name="chkAltCorrecta" id="chkAltCorrecta" class="checkbox-inline" type="checkbox" />
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-sm-6">
+                            <br />
+                            <button type="button" name="btnAgregarAlternativa" id="btnAgregarAlternativa" class="btn btn-primary"><span class="fa fa-check"></span></button>
+                            <button type="button" name="btnActualizarAlternativa" id="btnActualizarAlternativa" class="btn btn-info"><span class="fa fa-refresh"></span></button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12" id="divTablaAlternativa">
+                        <table id="tablaAlternativas" class="table table-bordered table-condensed">
+                            <thead>
+                                <tr style="background-color:black;color:white">
+                                    <th>Desc. alternativa</th>
+                                    <th style="text-align:center;width:200px">Alternativa correcta?</th>
+                                    <th style="text-align:center;width:50px">
+                                        <i class="fa fa-trash-o"></i>
+                                    </th>
+                                    <th style="text-align:center;width:50px">
+                                        <i class="fa fa-edit"></i>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="contenedorOpcionesMultimedia" style="text-align: center;">
+            <button type="button" id="btnAgregarVideoImagen" class="btn btn-app"><i class="fa fa-video-camera"></i>Mostrar opciones de video/imagen</button>
+            <button type="button" id="btnOcultarVideoImagen" class="btn btn-app"><i class="fa fa-clone"></i>Ocultar opciones video/imagen</button>
+        </div>
+        
+        <div id="cajaVideoEImagen" class="row">
+            <div class="col-md-6">
+                <div class="box" id="cajaImagenes">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label>Agregar Imagenes</label>
+                                <input name="imgenesFile" id="imgenesFile" type="file" />
+                            </div>
+                            <div class="form-group col-md-6">
+                                <button type="button" name="btnAgregarImagen" id="btnAgregarImagen" class="btn btn-primary">Agregar imagen</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12" id="divtablaImagenes">
+                                <table id="tablaImagenes" class="table table-bordered table-condensed">
+                                    <thead>
+                                        <tr style="background-color:black;color:white">
+                                            <th>Archivo imagen</th>
+                                            <th style="text-align:center;width:200px">Tipo archivo</th>
+                                            <th style="text-align:center;width:50px"><i class="fa fa-trash-o"></i></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="box" id="cajaVideos">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label>Agregar videos</label>
+                                <input name="" id="" type="file" />
+                            </div>
+                            <div class="form-group col-md-6">
+                                <button type="button" name="" id="" class="btn btn-primary">Agregar video</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table id="tablaVideos" class="table table-bordered table-condensed" style="background-color:black;color:white">
+                                    <thead>
+                                        <tr>
+                                            <th>Archivo video</th>
+                                            <th style="text-align:center;width:200px">Tipo archivo</th>
+                                            <th style="text-align:center;width:50px"><i class="fa fa-trash-o"></i></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="contenedorAgregarPregunta" class="" style="text-align: center;">
+            <button type="button" name="" id="btnAgregarPregunta" class="btn btn-block btn-warning">Agregar pregunta</button>
+        </div>
+
+        <div id="cajaListadoPreguntas" class="box">
+            <div class="box-header with-border">
+                <h3 class="box-title">Listado de preguntas</h3>
+            </div>
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-12" id="divTablaPreguntas">
+                        <table id="tablaPreguntas" class="table table-bordered table-condensed">
+                            <thead>
+                                <tr style="background-color:black;color:white">
+                                    <th style="text-align:center;width:180px">N° Pregunta</th>
+                                    <th>Descripción pregunta</th>
+                                    <th># Alternativas</th>
+                                    <th style="text-align:center;width:50px"><i class="fa fa-trash-o"></i></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <button type="button" id="btnRegistrarExamen" class="btn btn-block btn-success btn-lg"><span class="fa fa-save"></span> REGISTRAR EXAMEN</button>
+        </div>
+
+    </section>
+</div>
+<script>
+    $(document).ready(function () {
+        // Valida el tipo de usuario
+        $("#txtClave").val("");
+        let tipoUsuario = $("#hdUsuarioSuscripcion").val();
+        if (tipoUsuario > 0) {
+            $("#usuarioSuscripcion").show();
+        }
+
+        inicializarLibrerias();
+        inicializarVariables();
+        inicializarEventos();
+    });
+
+    function inicializarLibrerias() {
+        $('.froala_editor').froalaEditor({
+            language: 'es'
+        });
+
+        $('.datepicker').datepicker({
+            autoclose: true,
+            format: 'dd/mm/yyyy',
+            locale: 'es',
+            language: 'es'
+        });
+    }
+
+
+    function inicializarVariables() {
+        // Examen
+        window.examen = {};
+
+        // Preguntas
+        window.LstPreguntas = [];
+        window.tblPreguntaBody = document.querySelector('#tablaPreguntas tbody');
+
+        // Para alternativa
+        window.LstAlternativa = [];
+        window.tblAlternativaBody = document.querySelector('#tablaAlternativas tbody');
+
+        //Para imagenes
+        window.LstImagen = [];
+        window.tblImagenBody = document.querySelector('#tablaImagenes tbody');
+        window.itemImagenes = 0;
+
+        window.LstVideo = [];
+    }
+
+    function limpiarDiseñadorPreguntas() {
+        // Limpia el froala editor
+        $('.froala_editor').froalaEditor('html.set', '');
+
+        // Alternativa y tabla
+        $("#txtDescAlternativa").val("");
+        limpiarTabla("tablaAlternativas");
+
+        $("#tablaImagenes").val("");
+        limpiarTabla("tablaImagenes");
+
+        $("#tablaVideos").val("");
+        limpiarTabla("tablaVideos");
+    }
+
+    function obtenerFechaSiguiente() {
+        var date = new Date();
+        date.setDate(date.getDate() + 1);
+        return date;
+    }
+
+    function limpiarDiseñadorExamen() {
+        $("#txtTitulo").val("");
+        $("#txtTiempo").val("");
+        var date = new Date();
+        date.setDate(date.getDate() + 1);
+        $('#txtFechaExpiracion').datepicker().datepicker("setDate", obtenerFechaSiguiente());
+        $("#txtDescripcion").val("");
+        limpiarTabla("tablaPreguntas");
+        limpiarDiseñadorPreguntas();
+    }
+
+    function inicializarEventos()
+    {
+
+      $.get("../Asignaturas/ObtenerAsignatura",
+      {
+      },
+      function (response) {
+          //console.log(response);
+          //Limpiar 
+          $("#idcategoria").empty();
+
+          //Le agreagamos una opcion vacia
+          $("#idcategoria").append("<option value = '0'>[NO SELECCIONADO]</option>");
+
+          $.each(response, function (index, value) {
+              $('<option>').val(value.IdAsignatura).text(value.Nombre).appendTo("#idcategoria");
+          });
+
+      });
+
+        $('#txtFechaExpiracion').datepicker().datepicker("setDate", obtenerFechaSiguiente());
+        // Botón diseñar preguntas
+        $("#btnDiseñarPregunta").on("click", function () {
+            limpiarDiseñadorPreguntas();
+            $("#cajaPreguntas").slideUp("slow", function () {
+                $("#cajaPreguntas").slideDown("slow");
+            });
+            /*$("#contenedorOpcionesMultimedia").slideUp("slow", function () {
+                $("#contenedorOpcionesMultimedia").slideDown("slow");
+            });*/
+            $("#contenedorAgregarPregunta").slideUp("slow", function () {
+                $("#contenedorAgregarPregunta").slideDown("slow");
+            });
+            
+            
+            $("#txtNumeroPregunta").html(window.LstPreguntas.length + 1);
+        });
+
+        $("#btnAgregarVideoImagen").on("click", function () {
+            $("#cajaVideoEImagen").slideDown("slow");
+        });
+
+        $("#btnOcultarVideoImagen").on("click", function () {
+            $("#cajaVideoEImagen").slideUp("slow");
+        });
+
+        $("#btnOcultarPregunta").on("click", function () {
+            // $("#cajaPreguntas, #contenedorOpcionesMultimedia, #contenedorAgregarPregunta").slideUp("slow");
+            $("#cajaPreguntas, #contenedorAgregarPregunta").slideUp("slow");
+        });
+
+        // Alternativa
+        $("#divTablaAlternativa").on("click", eliminarAlternativa);
+        $(".editar-alternativa").on("click", editarAlternativa);
+
+        $("#btnAgregarAlternativa").on("click", agregarAlternativa);
+        $("#btnActualizarAlternativa").on("click", actualizarAlternativa);
+
+        // Imágenes
+        $("#btnAgregarImagen").on("click", agregarImagen);
+        $("#divtablaImagenes").on("click", eliminarImagen);
+
+        $("#btnAgregarPregunta").on("click", agregarPregunta);
+
+        $('.froala_editor').froalaEditor({
+            language: 'es'
+        }).on('froalaEditor.image.beforeUpload', function (e, editor, files) {
+            if (files.length) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var result = e.target.result;
+                    editor.image.insert(result, null, null, editor.image.get());
+                };
+                reader.readAsDataURL(files[0]);
+            }
+            editor.popups.hideAll();
+            return false;
+        });
+
+        $('.datepicker').datepicker({
+            autoclose: true,
+            format: 'dd/mm/yyyy',
+            locale: 'es',
+            language: 'es'
+        });
+
+        $("#btnRegistrarExamen").on("click", registrarExamen);
+
+        $("#txtTiempo").keypress(function (e) {
+            let numeros = '1234567890';
+            let caracter = String.fromCharCode(e.which);
+            if (numeros.indexOf(caracter) < 0)
+                return false;
+        });
+
+        $("#txtDescAlternativa").on("keypress", function (e) {
+            let keyCode = e.keyCode;
+            if (keyCode == 13) { // ENTER
+                agregarAlternativa();
+            }
+        });
+    }
+
+    function minimoUnaAlternativaCorrecta(lstAlternativa) {
+        let existe = false;
+        for (var i = 0; i < lstAlternativa.length; i++) {
+            let alternativa = lstAlternativa[i];
+            if (alternativa.OpcionCorrecta) {
+                existe = true;
+                break;
+            }
+        }
+        return existe;
+    }
+
+    function agregarPregunta() {
+        // Traemos las alternativas
+        let indicePreguntaActual = window.LstPreguntas.length;
+        let lstAlternativa = window.LstAlternativa;
+        
+        if (lstAlternativa.length == 0) {
+            swal({
+                type: 'error',
+                title: 'Error',
+                text: 'La pregunta actual no tiene alternativas. Llene las alternativas para guardar la pregunta!',
+            });
+            return;
+        }
+        if ($(".froala_editor").val().trim() === "" ) {
+            swal({
+                type: 'error',
+                title: 'Error',
+                text: 'Ingrese descripción de la pregunta',
+            });
+            return;
+        }
+
+        if (!minimoUnaAlternativaCorrecta(window.LstAlternativa)) {
+            swal({
+                type: 'error',
+                title: 'Error',
+                text: 'Ingrese como mínimo una alternativa correcta a la pregunta',
+            });
+            return false;
+        }
+
+        let pregunta = {
+            IdPregunta: null,
+            Pregunta: $('.froala_editor').froalaEditor('html.get'), // Descripción de la pregunta en HTML
+            LstImagen: [],
+            LstVideo: [],
+            LstAlternativa: window.LstAlternativa
+        };
+        window.LstPreguntas[indicePreguntaActual] = pregunta;
+
+        // Se limpia
+        window.LstAlternativa = [];
+        window.LstVideo = [];
+        window.LstImagen = [];
+        limpiarDiseñadorPreguntas();
+        // Mostrar preguntas en la tabla
+        // $("#cajaPreguntas, #contenedorOpcionesMultimedia, #contenedorAgregarPregunta").slideUp("slow");
+        $("#cajaPreguntas, #contenedorAgregarPregunta").slideUp("slow");
+        
+        mostrarPreguntas();
+    }
+
+    function convertToDate(strFecha) {
+        let array = strFecha.split("/");
+        let dia = array[0];
+        let mes = array[1];
+        let anio = array[2];
+        let fecha = new Date(anio, mes - 1, dia);
+        return fecha;
+    }
+
+    function mostrarPreguntas() {
+        limpiarTabla("tablaPreguntas");
+        let nroPreguntas = window.LstPreguntas.length;
+        for (let i = 0; i < nroPreguntas; ++i) {
+            var pregunta = window.LstPreguntas[i];
+            pregunta.Numero = (i + 1); // Actualizamos su número de pregunta
+
+            const row = document.createElement("tr");
+            row.innerHTML = "<td>" + pregunta.Numero + "</td>" +
+                            "<td>" + pregunta.Pregunta + "</td>" +
+                            "<td>" + pregunta.LstAlternativa.length + "</td>" +
+                            "<td><a href='#' class='eliminar-pregunta' data-id=" + (i + 1) + " onclick='eliminarPregunta(" + (i + 1) + ");'><i class='fa fa-trash'></i></a></td>";
+
+            tblPreguntaBody.appendChild(row);
+        }
+    }
+
+    function eliminarPregunta(numeroPregunta) {
+            window.LstPreguntas.forEach(function (pregunta, index) {
+                if (pregunta.Numero === Number(numeroPregunta)) {
+                    window.LstPreguntas.splice(index, 1);
+                }
+            });
+
+        mostrarPreguntas();
+    }
+
+    // Funciones para alternativa
+    function agregarAlternativa() {
+
+        let validacion = $("#txtDescAlternativa").val().trim().length > 0;
+
+        if (validacion) {
+            let esAlternativaCorrecta = $("#chkAltCorrecta").is(':checked');
+
+            let alternativa = {
+                Numero: window.LstAlternativa.length + 1,
+                Descripcion: $("#txtDescAlternativa").val().trim(),
+                OpcionCorrecta: esAlternativaCorrecta
+            };
+            window.LstAlternativa.push(alternativa);
+            $("#chkAltCorrecta").prop("checked", false);
+            mostrarAlternativas();
+            $("#txtDescAlternativa").val("").focus();
+
+        } else {
+            swal({
+                type: 'error',
+                title: 'Error',
+                text: 'Ingrese descripción de la alternativa'
+            });
+        }        
+    }
+
+    function actualizarAlternativa() {
+        let i = $("#txtIdAlternativa").val();
+
+        let alternativa = {
+            Numero: i + 1,
+            Descripcion: $("#txtDescAlternativa").val().trim(),
+            OpcionCorrecta: $("#chkAltCorrecta").is(":checked")
+        };
+
+        window.LstAlternativa[i] = alternativa;
+        $("#chkAltCorrecta").prop("checked", false);
+        mostrarAlternativas();
+        $("#txtDescAlternativa").val("").focus();
+    }
+
+    // Limpia y vuelve a mostrar las alternativas
+    function mostrarAlternativas() {
+        limpiarTabla("tablaAlternativas");
+        let nroAlternativas = window.LstAlternativa.length;
+        for (let i = 0; i < nroAlternativas; ++i) {
+            var alternativa = window.LstAlternativa[i];
+            alternativa.Numero = (i + 1); // Actualizamos su número de pregunta
+            let alternativaCorrecta = "";
+
+            if (alternativa.OpcionCorrecta === true) {
+                alternativaCorrecta = "<td><i class='fa fa-check-square-o'></i></td>";
+            } else {
+                alternativaCorrecta = "<td><i class='fa fa-square-o'></i></td>";
+            }
+
+            const row = document.createElement("tr");
+            row.innerHTML = "<td>" + alternativa.Descripcion + "</td>" +
+                            alternativaCorrecta +
+                "<td><a href='#' class='borrar-alternativa' data-id=" + (i + 1) + "><i class='fa fa-trash'></i></a></td>" + 
+                `<td><a href="#" class="editar-alternativa" onclick="editarAlternativa(${i})" data-id=${(i + 1)}"></i><i class="fa fa-edit"></i></a></td>`;
+
+            tblAlternativaBody.appendChild(row);
+        }
+    }
+
+    function eliminarAlternativa(e) {
+        e.preventDefault();
+        let atv, numeroAlternativa;
+
+        if (e.target.parentElement.classList.contains('borrar-alternativa')) {
+            e.target.parentElement.parentElement.parentElement.remove();
+            atv = e.target.parentElement.parentElement.parentElement;
+            numeroAlternativa = atv.querySelector('a').getAttribute('data-id');
+
+            window.LstAlternativa.forEach(function (alternativa, index) {
+                if (alternativa.Numero === Number(numeroAlternativa)) {
+                    window.LstAlternativa.splice(index, 1);
+                }
+            });
+        }
+
+        mostrarAlternativas();
+    }
+
+    // Función que trae los datos de la alternativa hacia los inputs
+    function editarAlternativa(i) {
+        let alternativa = window.LstAlternativa[i];
+        console.log(alternativa);
+        $("#txtIdAlternativa").val(i);
+        $("#txtDescAlternativa").val(alternativa.Descripcion);
+        $("#chkAltCorrecta").prop("checked", alternativa.OpcionCorrecta);
+    }
+
+    // Para registrar el examen
+    function registrarExamen() {
+        var lstPreguntas = window.LstPreguntas;
+        let fechaExpiracion = convertToDate($("#txtFechaExpiracion").val());
+        let fechaActual = new Date();
+        let clave = $("#txtClave").val();
+        let minutos = $("#txtTiempo").val();
+        let idAsignatura = $("#idcategoria").val();
+
+        if (lstPreguntas.length == 0) {
+            swal({
+                type: 'error',
+                title: 'Error',
+                text: 'El examen actual no tiene ninguna pregunta. Llene las preguntas para registrar el examen.'
+            });
+            return;
+        }
+
+        if (minutos >= 120) {
+            swal({
+                type: 'error',
+                title: 'Error',
+                text: 'El examen tiene una duración máxima de 120 minutos'
+            });
+            return;
+        }
+
+        if (fechaExpiracion <= fechaActual) {
+            swal({
+                type: 'error',
+                title: 'Error',
+                text: 'La fecha de expiración del examen debe ser mayor que la fecha actual'
+            });
+            return;
+        }
+
+        if (idAsignatura <= 0) {
+            swal({
+                type: 'error',
+                title: 'Error',
+                text: 'Seleccione la categoría del Examen'
+            });
+            return;
+        }
+
+        swal({
+            title: 'Seguro que desea registrar el examen?',
+            // text: "You won't be able to revert this!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí'
+        }).then((result) => {
+            if (result.value) {
+                let titulo = $("#txtTitulo").val();
+                let tiempoMaximo = minutos;
+                let fechaExpiracion = $("#txtFechaExpiracion").val();
+                let descripcion = $("#txtDescripcion").val();
+                let asignatura = {
+                    "IdAsignatura": idAsignatura
+                }
+                // Validar entrada
+
+                window.examen = {
+                    IdExamen: null, // Se autogenera dentro de la aplicación
+                    FechaRegistro: null, // Se obtiene dentro de la aplicación
+                    FechaExpiracion: fechaExpiracion, // Fecha
+                    Usuario: null, // Lo obtiene desde la sesión dentro del Controller
+                    Titulo: titulo,
+                    Descripcion: descripcion,
+                    Clave: clave, // Clave del examen (es opcional)
+                    TiempoMaximo: tiempoMaximo, // Minutos
+                    Asignatura : asignatura,
+                    LstPreguntas: window.LstPreguntas // Lista de preguntas con alternativas y todo
+                };
+
+                let data = window.examen;
+                $.ajax({
+                    url: '../Examen/RegistrarExamen',
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        let respuesta = response;
+
+                        if (respuesta.Registra) {
+                            swal('Buen trabajo!', 'Se registró el examen correctamente!', 'success');
+                            limpiarDiseñadorExamen();
+                            inicializarVariables();
+                            //$("#cajaListadoPreguntas").slideUp("slow");
+
+                        } else {
+                            if (respuesta.CodigoError == -1) {
+                                swal({
+                                    type: 'error',
+                                    title: 'Error',
+                                    text: respuesta.MensajeError
+                                });
+                                $("#txtClave").val("");
+                                $("#usuarioSuscripcion").hide();
+
+                            } else {
+                                swal({
+                                    type: 'error',
+                                    title: 'Error',
+                                    text: 'Ocurrió un error al registrar el examen'
+                                })
+                            }
+                        }
+                    },
+                    error: function () {
+                        swal({
+                            type: 'error',
+                            title: 'Error',
+                            text: 'Error al procesar el registro'
+                        })
+                        window.LstPreguntas = [];
+                    }
+                });
+            }
+        })
+    }
+
+    function limpiarTabla(id) {
+        $('#' + id + ' tbody').empty();
+    }
+
+    //Funciones para Imagen
+    function agregarImagen() {
+
+        let fileImagen = $("#imgenesFile").get(0).files;
+
+        let objImagen = {
+            item: itemImagenes,
+            Imagen: fileImagen[0],
+            DescImagen: fileImagen[0].name,
+            Tipo: fileImagen[0].type
+        };
+
+        muestraImagen(objImagen);
+        itemImagenes++;
+    }
+
+    function muestraImagen(objImagen) {
+
+        LstImagen.push(objImagen);
+
+        const row = document.createElement("tr");
+        row.innerHTML = "<td>" + objImagen.DescImagen + "</td>" +
+                        "<td>" + objImagen.Tipo + "</td>"  +
+                        "<td><a href='#tablaImagenes' class='borrar-imagen' data-id=" + objImagen.item + "><i class='fa fa-trash'></i></a></td>";
+
+        tblImagenBody.appendChild(row);
+
+    }
+
+    function eliminarImagen(e) {
+
+        e.preventDefault();
+        let img, idImg;
+
+        if (e.target.parentElement.classList.contains('borrar-imagen')) {
+            e.target.parentElement.parentElement.parentElement.remove();
+            img = e.target.parentElement.parentElement.parentElement;
+            idImg = img.querySelector('a').getAttribute('data-id');
+        }
+
+        eliminarImagenArray(idImg);
+
+    }
+
+    function eliminarImagenArray(idImg) {
+        LstImagen.forEach(function (imgArray, index) {
+            if (imgArray.item === Number(idImg)) {
+                LstImagen.splice(index, 1);
+            }
+        });
+
+    }
+
+    // Armar el objeto examen
+    /*var examen = {
+        IdExamen: null, // Se autogenera dentro de la aplicación
+        FechaRegistro: null, // Se obtiene dentro de la aplicación
+        FechaExpiracion: "2019-01-01", // Fecha
+        Usuario: null, // Lo obtiene desde la sesión dentro del Controller
+        Titulo: "Titulo de prueba",
+        Descripcion: "Examen de prueba",
+        TiempoMaximo: 40, // Minutos
+        LstPreguntas: [ // Lista de preguntas
+            // Pregunta 1
+            {
+                IdPregunta: null, // Se autogenera dentro de la aplicación
+                Pregunta: "Pregunta 1",
+                LstImagen: [],
+                LstVideo: [],
+                LstAlternativa: [
+                    {
+                        Numero: 1,
+                        Descripcion: "Alternativa 1",
+                        OpcionCorrecta: false
+                    },
+                    {
+                        Numero: 2,
+                        Descripcion: "Alternativa 2",
+                        OpcionCorrecta: false
+                    },
+                    {
+                        Numero: 3,
+                        Descripcion: "Alternativa 3",
+                        OpcionCorrecta: true
+                    }
+                ]
+            },
+            // Pregunta 2
+            {
+                IdPregunta: null, // Se autogenera dentro de la aplicación
+                Pregunta: "Pregunta 2",
+                LstImagen: [],
+                LstVideo: [],
+                LstAlternativa: [
+                    {
+                        Numero: 1,
+                        Descripcion: "Alternativa 1",
+                        OpcionCorrecta: false
+                    },
+                    {
+                        Numero: 2,
+                        Descripcion: "Alternativa 2",
+                        OpcionCorrecta: false
+                    },
+                    {
+                        Numero: 3,
+                        Descripcion: "Alternativa 3",
+                        OpcionCorrecta: true
+                    }
+                ]
+            }
+        ]
+    };*/
+
+</script>

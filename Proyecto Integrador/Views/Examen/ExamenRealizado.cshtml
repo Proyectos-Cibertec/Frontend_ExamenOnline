@@ -1,0 +1,168 @@
+﻿@model BE.ExamenRealizadoBE
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Respuestas el Examen";
+    List<BE.ExamenRealizadoDetalleBE> lstDetalle = new List<BE.ExamenRealizadoDetalleBE>();
+    string claseAlternativaCorrectaIncorrecta = "";
+    bool alternativaMarcada = false;
+    int nroPreguntas = Model.Examen.LstPreguntas.ToList().Count;
+    int nroCorrectas = Model.NumeroPreguntasCorrectas;
+    int nroIncorrectas = nroPreguntas - nroCorrectas;
+}
+
+<style>
+    .alternativaCorrecta {
+        background: #b3ecb3;
+        font-weight: bold;
+        margin-bottom: 3px;
+        border-radius: 4px;
+    }
+
+    .alternativaIncorrecta {
+        background: #f5c3c3;
+        font-weight: bold;
+        margin-bottom: 3px;
+        border-radius: 4px;
+    }
+
+    .box.box-solid.box-primary>.box-header {
+    color: #fff;
+    background: #337ab7;
+    background-color: #337ab7;
+}
+</style>
+<section id="contenedorExamenRealizado" class="content">
+    <div class="row">
+        <div class="col-sm-12 col-md-5 col-lg-5">
+
+            <div class="box box-widget widget-user-2 contenedor-lst-examen">
+                <div class="widget-user-header bg-primary">
+                    <div class="widget-user-image">
+                        <img class="img-circle" src="../Imagenes/icontest-100x100.png" alt="icon">
+                    </div>
+                    <h3 class="widget-user-username titulo-examen">@Model.Examen.Titulo</h3>
+                    <h5 class="widget-user-desc">Realizado el @Model.FechaTermino</h5>
+                </div>
+                <div class="box-footer no-padding">
+                    <ul class="nav nav-stacked">
+                        <li>
+                            <a href="#">
+                                <dl style="margin:0px;">
+                                    <dt>Descripción:</dt>
+                                    <dd>@Model.Examen.Descripcion</dd>
+                                </dl>
+                            </a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-fw fa-clock-o"></i> Duración: <span class="pull-right badge bg-maroon">@Model.Examen.TiempoMaximo min.</span></a></li>
+                        <li><a href="#"><i class="fa fa-fw fa-calendar-minus-o"></i> Inició: <span class="pull-right badge bg-blue">@Model.FechaRealizacion</span></a></li>
+                        <li><a href="#"><i class="fa fa-fw fa-calendar-plus-o"></i> Terminó: <span class="pull-right badge bg-blue">@Model.FechaTermino</span></a></li>
+                        <li><a href="#"><i class="fa fa-fw fa-list-ul"></i> Total Preguntas: <span class="pull-right badge bg-black">@nroPreguntas</span></a></li>
+                        <li><a href="#"><i class="fa fa-fw fa-check" style="color:#00a65a;"></i> Correctas: <span class="pull-right badge bg-green">@nroCorrectas</span></a></li>
+                        <li><a href="#"><i class="fa fa-fw fa-close" style="color:#d33724;"></i> Incorrectas: <span class="pull-right badge bg-red">@nroIncorrectas</span></a></li>
+                        <li></li>
+                    </ul>
+                </div>
+                <div style="text-align: center; margin-top: 10px;">
+                    <a class="btn btn-app" href="../Examen/MisExamenesRealizados">
+                        <i class="fa fa-edit"></i> Regresar
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-7 col-lg-7">
+            @foreach (var pregunta in Model.Examen.LstPreguntas)
+            {
+                {
+                    lstDetalle = new List<BE.ExamenRealizadoDetalleBE>();
+                    claseAlternativaCorrectaIncorrecta = "";
+
+                    // BE.PreguntaBE preguntaActual;
+                    foreach (var item in Model.LstExamenRealizadoDetalle)
+                    {
+                        if (item.IdPregunta == pregunta.IdPregunta)
+                        {
+                            // Obtenemos todas las alternativas marcadas por el usuario de la pregunta actual
+                            lstDetalle.Add(item);
+                            // break; // No debe haber break porque pueden haber varias preguntas (debido a que se seleccionaron varias alternativas)
+                        }
+                    }
+                }
+
+                <div class="">
+                    <div class="box box-primary box-solid">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">
+                                <i class="fa fa-fw fa-thumb-tack"></i> Pregunta @pregunta.Numero
+                            </h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body" style="">
+                            <blockquote>
+                                <p>
+                                    @Html.Raw(pregunta.Pregunta)
+                                </p>
+                            </blockquote>
+                            @foreach (var alternativa in pregunta.LstAlternativa)
+                            {
+                                alternativaMarcada = false;
+                                if (alternativa.OpcionCorrecta)
+                                {
+                                    claseAlternativaCorrectaIncorrecta = "alternativaCorrecta";
+                                }
+                                else
+                                {
+                                    claseAlternativaCorrectaIncorrecta = "";
+                                }
+
+                                foreach (var item in lstDetalle)
+                                {
+                                    if (item.IdAlternativa == alternativa.IdAlternativa) // Ha sido marcada por el usuario
+                                    {
+                                        alternativaMarcada = true;
+                                        if (!alternativa.OpcionCorrecta)
+                                        {
+                                            claseAlternativaCorrectaIncorrecta = "alternativaIncorrecta";
+                                        }
+                                        break;
+                                    }
+                                }
+                                <div style="margin-bottom:3px; padding:0px 10px;" class="@claseAlternativaCorrectaIncorrecta">
+                                    <span>
+                                        @if (alternativaMarcada)
+                                        {
+                                            <input type="checkbox" checked disabled="disabled" />
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" disabled="disabled" />
+                                        }
+                                    </span>
+                                    <span>
+                                        <span>@alternativa.Numero. </span><span style="font-style: italic">@alternativa.Descripcion</span>
+                                    </span>
+                                    <span>
+                                        @if (alternativa.OpcionCorrecta)
+                                        {
+                                            <i class="fa fa-fw fa-check" style="color:#00a65a;"></i>
+                                        }
+                                        else if (alternativaMarcada)
+                                        {
+                                            <i class="fa fa-fw fa-close" style="color:#d33724;"></i>
+                                        }
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+            }
+        </div>
+    </div>
+</section>

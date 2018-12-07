@@ -1,0 +1,2 @@
+﻿Abrir la Consola del Administrador de Paquetes Nuget y ejecutar el siguiente comando:
+Install-Package Microsoft.CodeDom.Providers.DotNetCompilerPlatform -Version 2.0.0
