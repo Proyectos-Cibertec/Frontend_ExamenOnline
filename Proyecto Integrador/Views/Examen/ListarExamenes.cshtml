@@ -11,7 +11,7 @@
     }
 
     .contenedor-examen {
-        display:none;
+        display: none;
     }
 </style>
 <div class="">
@@ -26,10 +26,7 @@
             <li class="active">Menu Principal</li>
         </ol>
     </section>
-
-    <section id="contenedorExamenes" class="content">
-    </section>
-
+    <section id="contenedorExamenes" class="content"></section>
 
     <div class="modal modal-info fade" id="modalConfirmacionExamen">
         <div class="modal-dialog">
@@ -39,7 +36,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                     <h4 class="modal-title">¿Está seguro que desea resolver este examen?</h4>
-                    <input type="hidden" value="" id="idExamenDinamico"/>
+                    <input type="hidden" value="" id="idExamenDinamico" />
                 </div>
                 <div class="modal-body">
                     <p>El tiempo iniciará desde que de click al boton resolver examen</p>
@@ -51,9 +48,7 @@
             </div>
         </div>
     </div>
-
 </div>
-
 <script>
     $(document).ready(function () {
         inicializarVariables();
@@ -92,7 +87,7 @@
                     });
                 }
             });
-                        
+
         });
 
     });
@@ -104,8 +99,8 @@
 
     function obtenerExamenesPublicos() {
         $.ajax({
-            url: "../Examen/Usp_ObtenerExamenesPublicos", // URL de la petición
-            type: "POST", // Tipo de petición
+            url: url + "servicioExamen/ObtenerExamenesPublicos",//"../Examen/Usp_ObtenerExamenesPublicos", // URL de la petición
+            type: "GET", // Tipo de petición
             datatype: "json", // El tipo de información de la respuesta
             contentType: "application/json; charset=utf-8",
             success: function (response) { // Si la respuesta es correcta
@@ -148,27 +143,27 @@
                     <div class="box box-widget widget-user-2 contenedor-lst-examen">
                         <div class="widget-user-header bg-primary">
                             <div class="widget-user-image">
-                                <img class="img-circle" src="${examen.Usuario.imgData}" alt="User Avatar">
+                                <img class="img-circle" src="${examen.usuario.imgData}" alt="User Avatar">
                             </div>
-                            <h3 class="widget-user-username titulo-examen">${examen.Titulo}</h3>
-                            <h5 class="widget-user-desc">${examen.FechaRegString}</h5>
+                            <h3 class="widget-user-username titulo-examen">${examen.titulo}</h3>
+                            <h5 class="widget-user-desc">${examen.fechaRegString}</h5>
                         </div>
                         <div class="box-footer no-padding">
                             <ul class="nav nav-stacked">
                                 <li><a href="#">
                                     <dl style="margin:0px;">
                                         <dt>Descripción:</dt>
-                                        <dd>${examen.Descripcion}</dd>
+                                        <dd>${examen.descripcion}</dd>
                                     </dl>
                                     </a>
                                 </li>
-                                <li><a href="#"><i class ="fa fa-fw fa-list-ul"></i> Nro Preguntas: <span class="pull-right badge bg-blue">${examen.NroPreguntas}</span></a></li>
-                                <li><a href="#"><i class ="fa fa-fw fa-clock-o"></i> Tiempo: <span class="pull-right badge bg-aqua">${examen.TiempoMaximo} min.</span></a></li>
-                                <li><a href="#"><i class ="fa fa-fw fa-calendar"></i> Expira el: <span class="pull-right badge bg-green">${examen.FechaExpString}</span></a></li>
+                                <li><a href="#"><i class ="fa fa-fw fa-list-ul"></i> Nro Preguntas: <span class="pull-right badge bg-blue">${examen.nroPreguntas}</span></a></li>
+                                <li><a href="#"><i class ="fa fa-fw fa-clock-o"></i> Tiempo: <span class="pull-right badge bg-aqua">${examen.tiempoMaximo} min.</span></a></li>
+                                <li><a href="#"><i class ="fa fa-fw fa-calendar"></i> Expira el: <span class="pull-right badge bg-green">${examen.fechaExpString}</span></a></li>
                                 <li><a href="#"><i class ="fa fa-fw fa-users"></i> Nro Suscritos: <span class ="pull-right badge bg-red">0</span></a></li>
                                 <li></li>
                                 <div style="text-align: center; margin-top: 10px;">
-                                    <a class ="btn btn-app" href="#" onclick="ConfirmarExamen(${examen.IdExamen})">
+                                    <a class ="btn btn-app" href="#" onclick="ConfirmarExamen(${examen.idExamen})">
                                         <i class ="fa fa-pencil"></i></i> Resolver Examen
                                     </a>
                                 </div>

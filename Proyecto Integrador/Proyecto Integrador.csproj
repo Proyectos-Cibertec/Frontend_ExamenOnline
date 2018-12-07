@@ -53,8 +53,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.5.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -2184,12 +2185,25 @@
     <Content Include="dist\js\pages\dashboard.js" />
     <Content Include="dist\js\pages\dashboard2.js" />
     <Content Include="Global.asax" />
+    <Content Include="Imagenes\Amor a Sofia.jpg" />
     <Content Include="Imagenes\Anonymous1.jpg" />
     <Content Include="Imagenes\avatar.png" />
+    <Content Include="Imagenes\Buho.jpg" />
+    <Content Include="Imagenes\check-300x300.png" />
     <Content Include="Imagenes\exam1.jpg" />
+    <Content Include="Imagenes\favicon16x16.ico" />
+    <Content Include="Imagenes\favicon32x32.ico" />
+    <Content Include="Imagenes\fondo %282%29.jpg" />
+    <Content Include="Imagenes\fondoPagina.jpg" />
+    <Content Include="Imagenes\foto1.jpg" />
+    <Content Include="Imagenes\foto2.jpg" />
+    <Content Include="Imagenes\foto3.jpg" />
+    <Content Include="Imagenes\foto4.jpg" />
+    <Content Include="Imagenes\foto5.jpg" />
     <Content Include="Imagenes\Hotel1.jpg" />
     <Content Include="Imagenes\Hotel2.jpg" />
     <Content Include="Imagenes\icon-test-40x40.png" />
+    <Content Include="Imagenes\icon-test-80x80.png" />
     <Content Include="Imagenes\icontest-100x100.png" />
     <Content Include="Imagenes\image.jpg" />
     <Content Include="JS\ExamenController.js" />
@@ -3293,6 +3307,10 @@
     <ProjectReference Include="..\BO\BO.csproj">
       <Project>{1a24bd06-2917-4c67-904a-c82ceefbe6ee}</Project>
       <Name>BO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Servicio\Servicio.csproj">
+      <Project>{fc8a3731-8983-4536-ab02-927afc224c87}</Project>
+      <Name>Servicio</Name>
     </ProjectReference>
     <ProjectReference Include="..\Utilitarios\Utilitarios.csproj">
       <Project>{bd656a4a-a9ce-4e38-8141-b08722848bfa}</Project>

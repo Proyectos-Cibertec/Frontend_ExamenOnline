@@ -1,4 +1,4 @@
-﻿@{ 
+﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
@@ -6,7 +6,6 @@
 <link href="~/bower_components/froala_editor/css/froala_editor.pkgd.min.css" rel="stylesheet" />
 <link href="~/bower_components/froala_editor/css/froala_style.min.css" rel="stylesheet" />
 <link href="~/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css" rel="stylesheet" />
-
 <!-- Include external JS libs. -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/mode/xml/xml.min.js"></script>
@@ -15,7 +14,6 @@
 <script src="~/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
 <script src="~/bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
 <style>
-
     #usuarioSuscripcion {
         display: none;
     }
@@ -35,7 +33,7 @@
     }
 </style>
 <div class="">
-    <input id="hdUsuarioSuscripcion" type="hidden" value="@ViewBag.TipoUsuario"/>
+    <input id="hdUsuarioSuscripcion" type="hidden" value="@ViewBag.TipoUsuario" />
     <section class="content-header">
         <h1>
             Registrar Examen
@@ -46,12 +44,12 @@
             <li class="active"><a href="#">Registrar Examen</a></li>
         </ol>
     </section>
-
     <section class="content">
         <div class="row">
             <div class="box box-default">
                 <div class="box-header with-border">
                     <h3 class="box-title">Opciones generales del examen</h3>
+                    <input type="hidden" id="IdUsuario" value="@ViewBag.IdUsuario" />
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
                             <i class="fa fa-minus"></i>
@@ -112,7 +110,6 @@
                 <h3 class="box-title"><i class="fa fa-tag"></i> Pregunta # <span id="txtNumeroPregunta"></span></h3>
             </div>
             <div class="box-body">
-
                 <div class="row">
                     <!--<div class="col-md-12">
                         <fieldset>
@@ -146,7 +143,6 @@
                             <button type="button" name="btnActualizarAlternativa" id="btnActualizarAlternativa" class="btn btn-info"><span class="fa fa-refresh"></span></button>
                         </div>
                     </div>
-
                     <div class="col-md-12" id="divTablaAlternativa">
                         <table id="tablaAlternativas" class="table table-bordered table-condensed">
                             <thead>
@@ -171,7 +167,7 @@
             <button type="button" id="btnAgregarVideoImagen" class="btn btn-app"><i class="fa fa-video-camera"></i>Mostrar opciones de video/imagen</button>
             <button type="button" id="btnOcultarVideoImagen" class="btn btn-app"><i class="fa fa-clone"></i>Ocultar opciones video/imagen</button>
         </div>
-        
+
         <div id="cajaVideoEImagen" class="row">
             <div class="col-md-6">
                 <div class="box" id="cajaImagenes">
@@ -232,11 +228,10 @@
                 </div>
             </div>
         </div>
-        
+
         <div id="contenedorAgregarPregunta" class="" style="text-align: center;">
             <button type="button" name="" id="btnAgregarPregunta" class="btn btn-block btn-warning">Agregar pregunta</button>
         </div>
-
         <div id="cajaListadoPreguntas" class="box">
             <div class="box-header with-border">
                 <h3 class="box-title">Listado de preguntas</h3>
@@ -262,7 +257,6 @@
         <div>
             <button type="button" id="btnRegistrarExamen" class="btn btn-block btn-success btn-lg"><span class="fa fa-save"></span> REGISTRAR EXAMEN</button>
         </div>
-
     </section>
 </div>
 <script>
@@ -353,7 +347,7 @@
       },
       function (response) {
           //console.log(response);
-          //Limpiar 
+          //Limpiar
           $("#idcategoria").empty();
 
           //Le agreagamos una opcion vacia
@@ -378,8 +372,8 @@
             $("#contenedorAgregarPregunta").slideUp("slow", function () {
                 $("#contenedorAgregarPregunta").slideDown("slow");
             });
-            
-            
+
+
             $("#txtNumeroPregunta").html(window.LstPreguntas.length + 1);
         });
 
@@ -452,7 +446,7 @@
         let existe = false;
         for (var i = 0; i < lstAlternativa.length; i++) {
             let alternativa = lstAlternativa[i];
-            if (alternativa.OpcionCorrecta) {
+            if (alternativa.opcionCorrecta) {
                 existe = true;
                 break;
             }
@@ -464,7 +458,7 @@
         // Traemos las alternativas
         let indicePreguntaActual = window.LstPreguntas.length;
         let lstAlternativa = window.LstAlternativa;
-        
+
         if (lstAlternativa.length == 0) {
             swal({
                 type: 'error',
@@ -492,11 +486,11 @@
         }
 
         let pregunta = {
-            IdPregunta: null,
-            Pregunta: $('.froala_editor').froalaEditor('html.get'), // Descripción de la pregunta en HTML
-            LstImagen: [],
-            LstVideo: [],
-            LstAlternativa: window.LstAlternativa
+            idPregunta: null,
+            pregunta: $('.froala_editor').froalaEditor('html.get'), // Descripción de la pregunta en HTML
+            lstImagen: [],
+            lstVideo: [],
+            lstAlternativa: window.LstAlternativa
         };
         window.LstPreguntas[indicePreguntaActual] = pregunta;
 
@@ -508,7 +502,7 @@
         // Mostrar preguntas en la tabla
         // $("#cajaPreguntas, #contenedorOpcionesMultimedia, #contenedorAgregarPregunta").slideUp("slow");
         $("#cajaPreguntas, #contenedorAgregarPregunta").slideUp("slow");
-        
+
         mostrarPreguntas();
     }
 
@@ -526,12 +520,12 @@
         let nroPreguntas = window.LstPreguntas.length;
         for (let i = 0; i < nroPreguntas; ++i) {
             var pregunta = window.LstPreguntas[i];
-            pregunta.Numero = (i + 1); // Actualizamos su número de pregunta
+            pregunta.numero = (i + 1); // Actualizamos su número de pregunta
 
             const row = document.createElement("tr");
-            row.innerHTML = "<td>" + pregunta.Numero + "</td>" +
-                            "<td>" + pregunta.Pregunta + "</td>" +
-                            "<td>" + pregunta.LstAlternativa.length + "</td>" +
+            row.innerHTML = "<td>" + pregunta.numero + "</td>" +
+                            "<td>" + pregunta.pregunta + "</td>" +
+                            "<td>" + pregunta.lstAlternativa.length + "</td>" +
                             "<td><a href='#' class='eliminar-pregunta' data-id=" + (i + 1) + " onclick='eliminarPregunta(" + (i + 1) + ");'><i class='fa fa-trash'></i></a></td>";
 
             tblPreguntaBody.appendChild(row);
@@ -540,7 +534,7 @@
 
     function eliminarPregunta(numeroPregunta) {
             window.LstPreguntas.forEach(function (pregunta, index) {
-                if (pregunta.Numero === Number(numeroPregunta)) {
+                if (pregunta.numero === Number(numeroPregunta)) {
                     window.LstPreguntas.splice(index, 1);
                 }
             });
@@ -557,9 +551,9 @@
             let esAlternativaCorrecta = $("#chkAltCorrecta").is(':checked');
 
             let alternativa = {
-                Numero: window.LstAlternativa.length + 1,
-                Descripcion: $("#txtDescAlternativa").val().trim(),
-                OpcionCorrecta: esAlternativaCorrecta
+                numero: window.LstAlternativa.length + 1,
+                descripcion: $("#txtDescAlternativa").val().trim(),
+                opcionCorrecta: esAlternativaCorrecta
             };
             window.LstAlternativa.push(alternativa);
             $("#chkAltCorrecta").prop("checked", false);
@@ -572,16 +566,16 @@
                 title: 'Error',
                 text: 'Ingrese descripción de la alternativa'
             });
-        }        
+        }
     }
 
     function actualizarAlternativa() {
         let i = $("#txtIdAlternativa").val();
 
         let alternativa = {
-            Numero: i + 1,
-            Descripcion: $("#txtDescAlternativa").val().trim(),
-            OpcionCorrecta: $("#chkAltCorrecta").is(":checked")
+            numero: i + 1,
+            descripcion: $("#txtDescAlternativa").val().trim(),
+            opcionCorrecta: $("#chkAltCorrecta").is(":checked")
         };
 
         window.LstAlternativa[i] = alternativa;
@@ -596,19 +590,19 @@
         let nroAlternativas = window.LstAlternativa.length;
         for (let i = 0; i < nroAlternativas; ++i) {
             var alternativa = window.LstAlternativa[i];
-            alternativa.Numero = (i + 1); // Actualizamos su número de pregunta
+            alternativa.numero = (i + 1); // Actualizamos su número de pregunta
             let alternativaCorrecta = "";
 
-            if (alternativa.OpcionCorrecta === true) {
+            if (alternativa.opcionCorrecta === true) {
                 alternativaCorrecta = "<td><i class='fa fa-check-square-o'></i></td>";
             } else {
                 alternativaCorrecta = "<td><i class='fa fa-square-o'></i></td>";
             }
 
             const row = document.createElement("tr");
-            row.innerHTML = "<td>" + alternativa.Descripcion + "</td>" +
+            row.innerHTML = "<td>" + alternativa.descripcion + "</td>" +
                             alternativaCorrecta +
-                "<td><a href='#' class='borrar-alternativa' data-id=" + (i + 1) + "><i class='fa fa-trash'></i></a></td>" + 
+                "<td><a href='#' class='borrar-alternativa' data-id=" + (i + 1) + "><i class='fa fa-trash'></i></a></td>" +
                 `<td><a href="#" class="editar-alternativa" onclick="editarAlternativa(${i})" data-id=${(i + 1)}"></i><i class="fa fa-edit"></i></a></td>`;
 
             tblAlternativaBody.appendChild(row);
@@ -625,7 +619,7 @@
             numeroAlternativa = atv.querySelector('a').getAttribute('data-id');
 
             window.LstAlternativa.forEach(function (alternativa, index) {
-                if (alternativa.Numero === Number(numeroAlternativa)) {
+                if (alternativa.numero === Number(numeroAlternativa)) {
                     window.LstAlternativa.splice(index, 1);
                 }
             });
@@ -639,8 +633,8 @@
         let alternativa = window.LstAlternativa[i];
         console.log(alternativa);
         $("#txtIdAlternativa").val(i);
-        $("#txtDescAlternativa").val(alternativa.Descripcion);
-        $("#chkAltCorrecta").prop("checked", alternativa.OpcionCorrecta);
+        $("#txtDescAlternativa").val(alternativa.descripcion);
+        $("#chkAltCorrecta").prop("checked", alternativa.opcionCorrecta);
     }
 
     // Para registrar el examen
@@ -703,26 +697,27 @@
                 let fechaExpiracion = $("#txtFechaExpiracion").val();
                 let descripcion = $("#txtDescripcion").val();
                 let asignatura = {
-                    "IdAsignatura": idAsignatura
+                    "idAsignatura": idAsignatura
                 }
                 // Validar entrada
 
                 window.examen = {
-                    IdExamen: null, // Se autogenera dentro de la aplicación
-                    FechaRegistro: null, // Se obtiene dentro de la aplicación
-                    FechaExpiracion: fechaExpiracion, // Fecha
-                    Usuario: null, // Lo obtiene desde la sesión dentro del Controller
-                    Titulo: titulo,
-                    Descripcion: descripcion,
-                    Clave: clave, // Clave del examen (es opcional)
-                    TiempoMaximo: tiempoMaximo, // Minutos
-                    Asignatura : asignatura,
-                    LstPreguntas: window.LstPreguntas // Lista de preguntas con alternativas y todo
+                    idExamen: null, // Se autogenera dentro de la aplicación
+                    fechaRegistro: null, // Se obtiene dentro de la aplicación
+                    fechaExpString: fechaExpiracion, // Fecha
+                    usuario: { idUsuario: $("#IdUsuario").val() }, // Lo obtiene desde la sesión dentro del Controller
+                    titulo: titulo,
+                    descripcion: descripcion,
+                    clave: clave, // Clave del examen (es opcional)
+                    tiempoMaximo: tiempoMaximo, // Minutos
+                    asignatura : asignatura,
+                    lstPreguntas: window.LstPreguntas // Lista de preguntas con alternativas y todo
                 };
 
                 let data = window.examen;
+                console.log(data);
                 $.ajax({
-                    url: '../Examen/RegistrarExamen',
+                    url: url + "servicioExamen/RegistrarExamen",//'../Examen/RegistrarExamen',
                     type: 'POST',
                     dataType: 'json',
                     contentType: 'application/json; charset=utf-8',
@@ -730,18 +725,18 @@
                     success: function (response) {
                         let respuesta = response;
 
-                        if (respuesta.Registra) {
+                        if (respuesta.registra) {
                             swal('Buen trabajo!', 'Se registró el examen correctamente!', 'success');
                             limpiarDiseñadorExamen();
                             inicializarVariables();
                             //$("#cajaListadoPreguntas").slideUp("slow");
 
                         } else {
-                            if (respuesta.CodigoError == -1) {
+                            if (respuesta.codigoError == -1) {
                                 swal({
                                     type: 'error',
                                     title: 'Error',
-                                    text: respuesta.MensajeError
+                                    text: respuesta.mensajeError
                                 });
                                 $("#txtClave").val("");
                                 $("#usuarioSuscripcion").hide();
@@ -824,66 +819,5 @@
         });
 
     }
-
-    // Armar el objeto examen
-    /*var examen = {
-        IdExamen: null, // Se autogenera dentro de la aplicación
-        FechaRegistro: null, // Se obtiene dentro de la aplicación
-        FechaExpiracion: "2019-01-01", // Fecha
-        Usuario: null, // Lo obtiene desde la sesión dentro del Controller
-        Titulo: "Titulo de prueba",
-        Descripcion: "Examen de prueba",
-        TiempoMaximo: 40, // Minutos
-        LstPreguntas: [ // Lista de preguntas
-            // Pregunta 1
-            {
-                IdPregunta: null, // Se autogenera dentro de la aplicación
-                Pregunta: "Pregunta 1",
-                LstImagen: [],
-                LstVideo: [],
-                LstAlternativa: [
-                    {
-                        Numero: 1,
-                        Descripcion: "Alternativa 1",
-                        OpcionCorrecta: false
-                    },
-                    {
-                        Numero: 2,
-                        Descripcion: "Alternativa 2",
-                        OpcionCorrecta: false
-                    },
-                    {
-                        Numero: 3,
-                        Descripcion: "Alternativa 3",
-                        OpcionCorrecta: true
-                    }
-                ]
-            },
-            // Pregunta 2
-            {
-                IdPregunta: null, // Se autogenera dentro de la aplicación
-                Pregunta: "Pregunta 2",
-                LstImagen: [],
-                LstVideo: [],
-                LstAlternativa: [
-                    {
-                        Numero: 1,
-                        Descripcion: "Alternativa 1",
-                        OpcionCorrecta: false
-                    },
-                    {
-                        Numero: 2,
-                        Descripcion: "Alternativa 2",
-                        OpcionCorrecta: false
-                    },
-                    {
-                        Numero: 3,
-                        Descripcion: "Alternativa 3",
-                        OpcionCorrecta: true
-                    }
-                ]
-            }
-        ]
-    };*/
 
 </script>

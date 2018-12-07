@@ -4,6 +4,11 @@
 
 @{
     UsuarioBE oUsuario = (UsuarioBE)Session["usuario"];
+    var imagenUsuario = oUsuario.imgData;
+    if (imagenUsuario == "")
+    {
+        imagenUsuario = "/Imagenes/avatar.png";
+    }
 }
 <!DOCTYPE html>
 <html lang="es" ng-app="myapp">
@@ -171,13 +176,13 @@
 
                         <li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <img src="@oUsuario.imgData" class="user-image" alt="User Image">
+                                <img src="@imagenUsuario" class="user-image" alt="User Image">
                                 <span class="hidden-xs"><span class="usuario-nombres">@oUsuario.Nombres</span> <span class="usuario-apaterno">@oUsuario.ApellidoPaterno</span> <span class="usuario-amaterno">@oUsuario.ApellidoMaterno</span></span>
                             </a>
                             <ul class="dropdown-menu">
                                 <!-- User image -->
                                 <li class="user-header">
-                                    <img src="@oUsuario.imgData" class="img-circle" alt="User Image">
+                                    <img src="@imagenUsuario" class="img-circle" alt="User Image">
 
                                     <p>
                                         @Html.Label(oUsuario.Nombres) @Html.Label(oUsuario.ApellidoPaterno) @Html.Label(oUsuario.ApellidoMaterno)
@@ -228,7 +233,7 @@
                 <!-- Sidebar user panel -->
                 <div class="user-panel">
                     <div class="pull-left image">
-                        <img src="@oUsuario.imgData" class="img-circle" alt="User Image">
+                        <img src="@imagenUsuario" class="img-circle" alt="User Image">
                     </div>
                     <div class="pull-left info">
                         <p>@Html.Label(oUsuario.Nombres)</p>
@@ -295,5 +300,8 @@
         </footer>
         </div>
     <!-- ./wrapper -->
+    <script>
+        const url = "http://localhost:8080/RestExamenOnline/rest/";
+    </script>
 </body>
 </html>

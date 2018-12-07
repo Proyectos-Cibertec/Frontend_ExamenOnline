@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using BE;
 using BO;
+using Servicio;
 using Utilitarios;
 
 namespace Proyecto_Integrador.Controllers
@@ -36,6 +37,8 @@ namespace Proyecto_Integrador.Controllers
         public ActionResult Index(string usuario, string contraseña)
         {
             UsuarioBO boUsuario = new UsuarioBO();
+            ServicioLogin servicioLogin = new ServicioLogin();
+            ServicioUsuario servicioUsuario = new ServicioUsuario();
             UsuarioBE usuarioEntrada = new UsuarioBE();
             UsuarioBE usuarioSalida = new UsuarioBE();
             usuarioEntrada.Usuario = usuario;
@@ -47,7 +50,7 @@ namespace Proyecto_Integrador.Controllers
 
             try
             {
-                usuarioSalida = boUsuario.IniciarSesion(usuarioEntrada);
+                usuarioSalida = servicioLogin.IniciarSesion(usuarioEntrada); // Llamada al servicio
                 if (usuarioSalida != null)
                 {
                     // Puede logearse
@@ -59,7 +62,8 @@ namespace Proyecto_Integrador.Controllers
                 {
                     usuarioError = true;
                     // Obtener usuario para saber la razón de por qué no puede logearse
-                    usuarioSalida = boUsuario.ObtenerUsuario(usuario);
+                    // usuarioSalida = boUsuario.ObtenerUsuario(usuario);
+                    usuarioSalida = servicioUsuario.ObtenerUsuario(usuario);
                     if (usuarioSalida != null)
                     {
                         usuarioBloqueado = usuarioSalida.Bloqueado;
@@ -109,6 +113,7 @@ namespace Proyecto_Integrador.Controllers
             string Contrasenia,
             HttpPostedFileBase imgUsuario
         ) {
+            ServicioUsuario servicioUsuario = new ServicioUsuario();
             UsuarioBO bo = new UsuarioBO();
 
             UsuarioBE objUsu = new UsuarioBE();
@@ -119,14 +124,16 @@ namespace Proyecto_Integrador.Controllers
             objUsu.Dni = Dni;
             objUsu.Usuario = Usuario;
             objUsu.Contrasenia = Contrasenia;
-            objUsu.imgUsuario = imgUsuario;
+            objUsu.imgData = Utilitarios.ConversionImagen.ConvertirABase64(imgUsuario);
+            objUsu.imgUsuario = null;
 
-            RespuestaBE respuesta = bo.RegistrarUsuario(objUsu);
+            // RespuestaBE respuesta = bo.RegistrarUsuario(objUsu);
+            RespuestaBE respuesta = servicioUsuario.RegistrarUsuario(objUsu);
             if (respuesta.Registra)
             {
                 EnvioCorreo.EnviarCorreo(objUsu, "Registro de Usuario", "Se ha registrado correctamente en la plataforma. Su usuario es: <b>" + objUsu.Usuario + "</b> y su clave es: <b>" + objUsu.Contrasenia + "</b>");
                 ViewBag.mensajeRegistroCorrecto = "Se ha registrado correctamente";
-                return View("Index");
+                return RedirectToAction("Index");
             }
             else
             {

@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using BE;
 using BO;
+using Servicio;
 using System.IO;
 using System.Data.OleDb;
 using System.Data.Common;
@@ -39,6 +40,7 @@ namespace Proyecto_Integrador.Controllers
                 UsuarioBE usuario = (UsuarioBE)Session["usuario"];
                 int tipoUsuario = usuario.TipoUsuario.IdTipoUsuario;
                 ViewBag.TipoUsuario = tipoUsuario;
+                ViewBag.IdUsuario = usuario.IdUsuario;
                 return View();
             }
         }
@@ -178,11 +180,15 @@ namespace Proyecto_Integrador.Controllers
             }
             else
             {
+                UsuarioBE usuario = (UsuarioBE)Session["usuario"];
+                ViewBag.idUsuario = usuario.IdUsuario;
+                ViewBag.imgData = usuario.imgData;
                 ViewBag.idExamenRealizado = idExamenRealizado;
                 ViewBag.IdExamen = IdExamen;
+
                 return View();
             }
-        }        
+        }
 
         public JsonResult ObtenerExamenResolver(int IdExamen, int idExamenRealizado)
         {

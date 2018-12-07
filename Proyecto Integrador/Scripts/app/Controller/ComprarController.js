@@ -2,9 +2,10 @@
 
     $scope.verPrincipal = true;
     $scope.verFactura = false;
-    $scope.detalleCompra = [];
+    //$scope.detalleCompra = [];
+    let detalleCompra = [];
     $scope.totalVenta = 0;
-    let compra = {};
+    $scope.compra = {};
     let lstDetalleCompra = {};
 
     $scope.obtenerCompra = function () {
@@ -24,27 +25,34 @@
 
         if (validacion) {
             lstDetalleCompra = {
-                IdSuscripcion: $("#tipSus").val().split("|")[0],
-                descSus: $("#tipSus").val().split("|")[1],
-                CantidadMeses: $("#cantiMes").val(),
-                PrecioPorMes: $("#tipSus").val().split("|")[2]
+                "idSuscripcion": String($("#tipSus").val().split("|")[0]),
+                "descSus": String($("#tipSus").val().split("|")[1]),
+                "cantidadMeses": String($("#cantiMes").val()),
+                "precioPorMes": String($("#tipSus").val().split("|")[2])
             }
 
-            $scope.detalleCompra.push(lstDetalleCompra);
-            $scope.totalVenta = parseFloat(Number(lstDetalleCompra.PrecioPorMes) * Number(lstDetalleCompra.CantidadMeses)).toFixed(2);
-            compra = {
-                IdUsuario: $("#codigoUsu").val(),
-                Total: $scope.totalVenta,
-                'lstDetalleCompra': $scope.detalleCompra
+            detalleCompra.push(lstDetalleCompra);
+            $scope.totalVenta = parseFloat(Number(lstDetalleCompra.precioPorMes) * Number(lstDetalleCompra.cantidadMeses)).toFixed(2);
+            $scope.compra = {
+                "idUsuario": $("#codigoUsu").val(),
+                "total": $scope.totalVenta,
+                "lstDetalleCompra": detalleCompra
             }
 
             $scope.verPrincipal = false;
             $scope.verFactura = true;
         }
-        
+
     }
 
     $scope.enviarCompra = function () {
+
+
+        var parametros = {
+            "idUsuario": String($scope.compra.idUsuario),
+            "total": String($scope.compra.total),
+            "lstDetalleCompra": detalleCompra
+        }
 
         swal({
             title: 'Realizando la transacción!',
@@ -56,11 +64,12 @@
 
         $http({
             method: 'POST',
-            url: '../Comprar/RegistrarCompra',
-            data: JSON.stringify(compra)
+            url: url + "servicioExamen/RegistrarCompra",//'../Comprar/RegistrarCompra',
+            data: JSON.stringify(parametros)
         }).then(function (response) {
-            console.log(response);
-            if (response) {
+            console.log("En la respuesta");
+            console.log(response.data);
+            if (response.data.mensaje == "OK") {
                 swal('Buen trabajo!', 'Ha realizado la compra! Debe volver a logearse', 'success');
                 setTimeout(function () {
                     document.getElementById("btnCerrarSesion").click();
@@ -74,9 +83,9 @@
 
             }
             //window.location.href = "../Examen/ListarExamenes";
-            
+
         }, function (error) {
-            alert("ERROR: CONTACTE CON EL ADMINISTRADOR");
+            alert("ERROR: CONTACTE CON EL ADMINISTRADOR -> ERROR");
         });
     }
 

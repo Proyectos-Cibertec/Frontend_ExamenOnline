@@ -7,27 +7,28 @@
     let PregCorrectas = 0;
     let seconds = 0;
     let countdownTimer;
-
     $scope.validacionExamen = true;
 
     $scope.listaGeneral = function () {
         $http.get(
-            "../Examen/ObtenerExamenResolver"
+            url + "servicioExamen/ObtenerExamenResolver"
             + "?IdExamen=" + IdExamen + "&idExamenRealizado=" + idExamenRealizado
+            //"../Examen/ObtenerExamenResolver"
+            //+ "?IdExamen=" + IdExamen + "&idExamenRealizado=" + idExamenRealizado
         ).then(function (response) {
             console.log("SE OBTUVO DE LA BASE DE DATOS:");
             $scope.objExamenRealizado = response.data; // Obtiene el Examen Realizado
-            $scope.objExamen = $scope.objExamenRealizado.Examen;
-            seconds = $scope.objExamen.TiempoRestante;
+            $scope.objExamen = $scope.objExamenRealizado.examen;
+            seconds = $scope.objExamen.tiempoRestante;
 
             console.log($scope.objExamenRealizado);
 
-            if ($scope.objExamenRealizado.ValidaFechaExpiracion == 0) {
+            if ($scope.objExamenRealizado.validaFechaExpiracion == 0) {
                 console.log("Fecha");
                 $scope.validacionExamen = false;
             }
 
-            if ($scope.objExamenRealizado.Estado == false) {
+            if ($scope.objExamenRealizado.estado == false) {
                 console.log("Estado");
                 $scope.validacionExamen = false;
             }
@@ -48,28 +49,28 @@
 
     $scope.TerminarExamen = function () {
 
-        let PreguntasTemporal = $scope.objExamen.LstPreguntas;
+        let PreguntasTemporal = $scope.objExamen.lstPreguntas;
         let AlterArrayTem = [];
 
         PreguntasTemporal.forEach(function (elemento, index) {
 
             let objPreAlt = {};
-            objPreAlt.Numero = index + 1;
+            objPreAlt.numero = index + 1;
 
-            elemento.LstAlternativa.forEach(function (AltElm, AltIndex) {
+            elemento.lstAlternativa.forEach(function (AltElm, AltIndex) {
 
-                if ($('#pregunta-' + elemento.Numero + '-alternativa-' + AltElm.Numero).is(':checked')) {
-                    AlterArrayTem.push(AltElm.Descripcion);
+                if ($('#pregunta-' + elemento.numero + '-alternativa-' + AltElm.numero).is(':checked')) {
+                    AlterArrayTem.push(AltElm.descripcion);
 
                     let ExamDetReal = {};
-                    ExamDetReal.IdPregunta = elemento.IdPregunta;
-                    ExamDetReal.IdAlternativa = AltElm.IdAlternativa;
+                    ExamDetReal.idPregunta = elemento.idPregunta;
+                    ExamDetReal.idAlternativa = AltElm.idAlternativa;
                     ArrayExamenRealDetalle.push(ExamDetReal);
                 }
 
             });
 
-            objPreAlt.Descripcion = AlterArrayTem.join(",");
+            objPreAlt.descripcion = AlterArrayTem.join(",");
             AlterArrayTem = [];
             ArrayPreUsuario.push(objPreAlt);
         });
@@ -77,9 +78,10 @@
         //Compara con alternativas correctas
 
         let objExamenRealizado = {
-            TotalPreguntas: $scope.objExamen.LstPreguntas.length,
-            'Examen': { IdExamen: IdExamen },
-            'LstExamenRealizadoDetalle': ArrayExamenRealDetalle,
+            usuario: { idUsuario: $("#idUsuario").val() },
+            totalPreguntas: $scope.objExamen.lstPreguntas.length,
+            'examen': { idExamen: IdExamen },
+            'lstExamenRealizadoDetalle': ArrayExamenRealDetalle,
             'objAltMarcUsua': ArrayPreUsuario
         }
 
@@ -87,25 +89,25 @@
 
         $http({
             method: 'POST',
-            url: '../Examen/RegistrarExamenRealizado',
+            url: url + "servicioExamen/RegistrarExamenRealizado",//'../Examen/RegistrarExamenRealizado',
             data: JSON.stringify(objExamenRealizado)
         }).then(function (response) {
-
+            console.log("************************************************");
             console.log(response.data);
-            console.log(response.data.split(",")[1]);
+            console.log(response.data.mensaje.split(",")[1]);
 
-            if (response.data.split(",")[0] == "OK") {
-                window.location.href = "../Examen/ExamenRealizado?idExamenRealizado=" + response.data.split(",")[1];
+            if (response.data.mensaje.split(",")[0] == "OK") {
+                window.location.href = "../Examen/ExamenRealizado?idExamenRealizado=" + response.data.mensaje.split(",")[1];
             } else {
                 alert("ERROR: CONTACTE CON EL ADMINISTRADOR");
             }
-            
+
         }, function (error) {
             alert("ERROR: CONTACTE CON EL ADMINISTRADOR");
         });
 
     }
-    
+
     $scope.secondPassed = function () {
         var minutes = Math.round((seconds - 30) / 60);
         var remainigSecods = seconds % 60;

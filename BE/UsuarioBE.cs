@@ -32,6 +32,6 @@ namespace BE
 
         //Para categoria
         public RolBE Rol;
-        
+
     }
 }

@@ -796,10 +796,12 @@ AS
 		   dbo.Fun_Obtener_FechaExp_Examen(@IdExamen) as ValidaFechaExpiracion,
 		   U.IdUsuario,
 		   U.Nombres + ' ' + U.ApellidoPaterno + ' ' + U.ApellidoMaterno as NombreCompleto,
-		   U.Correo
+		   U.Correo,
+		   U.imagen
 	FROM Examen E INNER JOIN Usuario U on E.IdUsuario = U.IdUsuario
 	WHERE E.IdExamen = @IdExamen
 GO
+
 
 select * from ExamenRealizado
 
@@ -1237,10 +1239,6 @@ IF(@Evento = 5)--Consultar por id
 			  FROM Usuario
 		WHERE IdUsuario = @IdUsuario
 	END
-
-
-IF OBJECT_ID('USP_LISTA_ASIGNATURAS') IS NOT NULL
-	DROP PROCEDURE USP_LISTA_ASIGNATURAS
 GO
 
 IF OBJECT_ID('USP_LISTA_ASIGNATURAS') IS NOT NULL
