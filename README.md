@@ -18,7 +18,10 @@ Parte Front del Proyecto final del curso de Desarrollo de Servicios Web II del V
 1. Clonar el repositorio
 `https://github.com/Proyectos-Cibertec/Frontend_ExamenOnline`
 3. Importar el proyecto en Visual Studio
-4. Ejecutar
+4. Ajustar en el archivo Web.config la cadena de conexión `cn_ExamenOnline` a la Base de datos
+5. Ajustar el valor del key de la sección appSettings para apuntar al endpoint correcto (ip, puerto): `PathRegistrarUsuario`
+6. Ajustar el correo y password del correo en las keys `UsuarioRemitente` y `PasswordRemitente`
+7. Ejecutar la aplicación
 
 ## Capturas de pantalla de la aplicación
 
