@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,7 @@ namespace Servicio
         public UsuarioBE ObtenerUsuario(string usuario)
         {
             UsuarioBE oUsuario = null;
-            var webAddr = "http://localhost:8080/RestExamenOnline/rest/servicioUsuario/obtenerUsuario/";
+            var webAddr = ConfigurationManager.AppSettings["ApiExamenOnlineEndpointBase"] + ConfigurationManager.AppSettings["PathObtenerUsuario"];
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(webAddr);
             httpWebRequest.ContentType = "application/json; charset=utf-8";
             httpWebRequest.Method = "POST";
@@ -44,7 +45,7 @@ namespace Servicio
         public RespuestaBE RegistrarUsuario(UsuarioBE usuario)
         {
             RespuestaBE respuesta = null;
-            var webAddr = "http://localhost:8080/RestExamenOnline/rest/servicioUsuario/registrarUsuario/";
+            var webAddr = ConfigurationManager.AppSettings["ApiExamenOnlineEndpointBase"] + ConfigurationManager.AppSettings["PathRegistrarUsuario"];
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(webAddr);
             httpWebRequest.ContentType = "application/json; charset=utf-8";
             httpWebRequest.Method = "POST";

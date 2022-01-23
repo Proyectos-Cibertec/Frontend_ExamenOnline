@@ -7,6 +7,7 @@ using BE;
 using System.Net;
 using System.IO;
 using Newtonsoft.Json;
+using System.Configuration;
 
 namespace Servicio
 {
@@ -15,7 +16,7 @@ namespace Servicio
         public UsuarioBE IniciarSesion(UsuarioBE usuario)
         {
             UsuarioBE oUsuario = null;
-            var webAddr = "http://localhost:8080/RestExamenOnline/rest/servicioLogin/iniciarSesion/";
+            string webAddr = ConfigurationManager.AppSettings["ApiExamenOnlineEndpointBase"] + ConfigurationManager.AppSettings["PathIniciarSesion"];
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(webAddr);
             httpWebRequest.ContentType = "application/json; charset=utf-8";
             httpWebRequest.Method = "POST";
